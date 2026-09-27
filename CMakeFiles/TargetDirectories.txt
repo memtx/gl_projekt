@@ -1,0 +1,3 @@
+/home/Manul/Desktop/ZPG/cmakeTest/CMakeFiles/zpgproj.dir
+/home/Manul/Desktop/ZPG/cmakeTest/CMakeFiles/edit_cache.dir
+/home/Manul/Desktop/ZPG/cmakeTest/CMakeFiles/rebuild_cache.dir
