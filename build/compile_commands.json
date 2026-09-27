@@ -7,8 +7,8 @@
 },
 {
   "directory": "/home/Manul/Desktop/ZPG/cmakeTest/build",
-  "command": "/usr/bin/c++ -I/home/Manul/Desktop/ZPG/cmakeTest/include -I/home/Manul/Desktop/ZPG/cmakeTest/./src -g -std=gnu++20 -o CMakeFiles/zpgproj.dir/include/glutils.cpp.o -c /home/Manul/Desktop/ZPG/cmakeTest/include/glutils.cpp",
-  "file": "/home/Manul/Desktop/ZPG/cmakeTest/include/glutils.cpp",
-  "output": "/home/Manul/Desktop/ZPG/cmakeTest/build/CMakeFiles/zpgproj.dir/include/glutils.cpp.o"
+  "command": "/usr/bin/c++ -I/home/Manul/Desktop/ZPG/cmakeTest/include -I/home/Manul/Desktop/ZPG/cmakeTest/./src -g -std=gnu++20 -o CMakeFiles/zpgproj.dir/src/Application.cpp.o -c /home/Manul/Desktop/ZPG/cmakeTest/src/Application.cpp",
+  "file": "/home/Manul/Desktop/ZPG/cmakeTest/src/Application.cpp",
+  "output": "/home/Manul/Desktop/ZPG/cmakeTest/build/CMakeFiles/zpgproj.dir/src/Application.cpp.o"
 }
 ]

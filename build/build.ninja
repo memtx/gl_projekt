@@ -58,13 +58,13 @@ build CMakeFiles/zpgproj.dir/src/main.cpp.o: CXX_COMPILER__zpgproj_unscanned_Deb
   OBJECT_FILE_DIR = CMakeFiles/zpgproj.dir/src
   TARGET_SUPPORT_DIR = CMakeFiles/zpgproj.dir
 
-build CMakeFiles/zpgproj.dir/include/glutils.cpp.o: CXX_COMPILER__zpgproj_unscanned_Debug /home/Manul/Desktop/ZPG/cmakeTest/include/glutils.cpp || cmake_object_order_depends_target_zpgproj
+build CMakeFiles/zpgproj.dir/src/Application.cpp.o: CXX_COMPILER__zpgproj_unscanned_Debug /home/Manul/Desktop/ZPG/cmakeTest/src/Application.cpp || cmake_object_order_depends_target_zpgproj
   CONFIG = Debug
-  DEP_FILE = CMakeFiles/zpgproj.dir/include/glutils.cpp.o.d
+  DEP_FILE = CMakeFiles/zpgproj.dir/src/Application.cpp.o.d
   FLAGS = -g -std=gnu++20
   INCLUDES = -I/home/Manul/Desktop/ZPG/cmakeTest/include -I/home/Manul/Desktop/ZPG/cmakeTest/./src
   OBJECT_DIR = CMakeFiles/zpgproj.dir
-  OBJECT_FILE_DIR = CMakeFiles/zpgproj.dir/include
+  OBJECT_FILE_DIR = CMakeFiles/zpgproj.dir/src
   TARGET_SUPPORT_DIR = CMakeFiles/zpgproj.dir
 
 
@@ -75,7 +75,7 @@ build CMakeFiles/zpgproj.dir/include/glutils.cpp.o: CXX_COMPILER__zpgproj_unscan
 #############################################
 # Link the executable zpgproj
 
-build zpgproj: CXX_EXECUTABLE_LINKER__zpgproj_Debug CMakeFiles/zpgproj.dir/src/main.cpp.o CMakeFiles/zpgproj.dir/include/glutils.cpp.o | /home/Manul/Desktop/ZPG/cmakeTest/lib/libglfw3.a /home/Manul/Desktop/ZPG/cmakeTest/lib/libGLEW.so
+build zpgproj: CXX_EXECUTABLE_LINKER__zpgproj_Debug CMakeFiles/zpgproj.dir/src/main.cpp.o CMakeFiles/zpgproj.dir/src/Application.cpp.o | /home/Manul/Desktop/ZPG/cmakeTest/lib/libglfw3.a /home/Manul/Desktop/ZPG/cmakeTest/lib/libGLEW.so
   CONFIG = Debug
   DEP_FILE = CMakeFiles/zpgproj.dir/link.d
   FLAGS = -g

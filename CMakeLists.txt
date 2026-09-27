@@ -88,8 +88,10 @@ endif()
 
 add_executable(zpgproj    
     src/main.cpp
-    include/glutils.cpp
-    include/glutils.h
+    #include/glutils.cpp
+    #include/glutils.h
+    src/Application.cpp
+    #src/Application.h
     )
 
 
@@ -99,7 +101,7 @@ target_include_directories(zpgproj PRIVATE
         ${GLM_INCLUDE_DIR}
         ${GLEW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}
-        "./src"
+        "./src/"
 )
 
 # If you're linking against the static version of GLEW, define GLEW_STATIC
