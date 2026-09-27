@@ -46,7 +46,8 @@ static void button_callback(GLFWwindow* window, int button, int action, int mode
 //GLM test
 
 /*
-// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+//==== cv 1 ======
+// Projection matrix : 45degree Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.01f, 100.0f);
 
 // Camera matrix
@@ -73,11 +74,16 @@ int main(void)
 	glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
 	glfwSetWindowSizeCallback(app->window, window_size_callback);
 
-	/*float points[] = {
-	0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	const float points[] = { //pozice (x,y,z, procentuální), barva (procentální) 
+	0.0f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
 	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-	};*/
+	}; 
+ 
+	GLuint VBO_points = 0; //vpodstatě pointer/index na paměť ke které nemáme přístup
+	glGenBuffers(1, &VBO_points); //vygeneruje v kontextu místo na ten odkaz, a předá nám ho
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_points); //nataví GL_ARRAY_BUFFER v kontextu na odkaz z VBO_points
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW); //nastaví do GL_ARRAY_BUFFER (nyní objekt z VBO_points) data a řekne jak se mají používat
 
 	//vertex buffer object (VBO)
 	GLuint VBO = 0;
@@ -89,6 +95,19 @@ int main(void)
 	glGenBuffers(1, &VBO_2); // generate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(tree), tree, GL_STATIC_DRAW);
+
+	//============================
+
+	GLuint VAO_points = 0;
+	glGenVertexArrays(1, &VAO_points); //vygeneruje odkaz na VAO a napíše ho do VAO_points
+	glBindVertexArray(VAO_points);  //nastaví vertex array v kontextu na objekt odkázaný z VAO_points
+	glEnableVertexAttribArray(0); // zapne čtení dat. VAO bude mít 2 prvky (nebo listy prvků)
+	glEnableVertexAttribArray(1); //druhý atribut je normal vector
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_points); //nastaví GL_ARRAY_BUFFER na objekt z VBO_points (je třeba kvůli dřívějším objektům co to nastavily na svoje VBO)
+	// index, number of components, data type, normalized, vertex stride (velikost jedné skupiny, např zde 6x float na jeden prvek, takže stride==24), offset od začátku prvku
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)(3*sizeof(float)));
+
 
 	//Vertex Array Object (VAO)
 	GLuint VAO = 0;
@@ -118,7 +137,7 @@ int main(void)
 	GLuint vertexShader_2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/green.vert");
 
 	//Create and link the shader program 
-	GLuint shaderProgram = glCreateProgram();
+	GLuint shaderProgram = glCreateProgram();	
 	glAttachShader(shaderProgram, fragmentShader);
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
@@ -135,13 +154,18 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO_points);
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(points)); //mode, first count
+		
+ 
+		/*glUseProgram(shaderProgram);
 		glBindVertexArray(VAO_2);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(tree)); //mode,first,count
-		
 
 		glUseProgram(shaderProgram_2);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(sphere));
+		*/
 
 		// Display the rendered frame and process events
 		glfwSwapBuffers(app->window);
