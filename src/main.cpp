@@ -15,7 +15,7 @@
 
 #include "Application.h"
 
-#include "models/sphere.h"
+#include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
 #include "models/tree.h"
 
 
@@ -73,11 +73,15 @@ int main(void)
 	glfwSetWindowFocusCallback(app->window, window_focus_callback);
 	glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
 	glfwSetWindowSizeCallback(app->window, window_size_callback);
-
-	const float points[] = { //pozice (x,y,z, procentuální), barva (procentální) 
-	0.0f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
+ 
+	const float points[] = { //pozice (x,y,z, procentuální od středu), barva (procentální) 
+	-0.5f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
 	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+
+   -0.5f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
+	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
 	}; 
  
 	GLuint VBO_points = 0; //vpodstatě pointer/index na paměť ke které nemáme přístup
@@ -105,7 +109,7 @@ int main(void)
 	glEnableVertexAttribArray(1); //druhý atribut je normal vector
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_points); //nastaví GL_ARRAY_BUFFER na objekt z VBO_points (je třeba kvůli dřívějším objektům co to nastavily na svoje VBO)
 	// index, number of components, data type, normalized, vertex stride (velikost jedné skupiny, např zde 6x float na jeden prvek, takže stride==24), offset od začátku prvku
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)0);   //takhle budou hodnoty předávány fragment/vertex shaderu
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)(3*sizeof(float)));
 
 
@@ -134,7 +138,7 @@ int main(void)
 	GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/basic.vert");
 	GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/basic.frag");
 
-	GLuint vertexShader_2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/green.vert");
+	GLuint vertexShader2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/second.vert");
 
 	//Create and link the shader program 
 	GLuint shaderProgram = glCreateProgram();	
@@ -142,10 +146,10 @@ int main(void)
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
 
-	GLuint shaderProgram_2 = glCreateProgram();
-	glAttachShader(shaderProgram_2, fragmentShader);
-	glAttachShader(shaderProgram_2, vertexShader_2);
-	glLinkProgram(shaderProgram_2);
+	GLuint shaderProgram2 = glCreateProgram();
+	glAttachShader(shaderProgram2, fragmentShader);
+	glAttachShader(shaderProgram2, vertexShader2);
+	glLinkProgram(shaderProgram2);
 
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(app->window))
@@ -153,19 +157,22 @@ int main(void)
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		/*
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO_points);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(points)); //mode, first count
+		*/
+   
 		
- 
-		/*glUseProgram(shaderProgram);
+		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO_2);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(tree)); //mode,first,count
-
-		glUseProgram(shaderProgram_2);
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(tree)); //mode, first (start index?), count
+		
+		
+		glUseProgram(shaderProgram2);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(sphere));
-		*/
+		
 
 		// Display the rendered frame and process events
 		glfwSwapBuffers(app->window);

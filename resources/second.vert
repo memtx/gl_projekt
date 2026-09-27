@@ -7,11 +7,13 @@ out vec3 vertexColor;
 
 void main()
 {
-    vec3 newColour = color;
-    newColour[0] = newColour[0] - 0.4;
-    newColour[1] = newColour[1] + 0.6;
-    newColour[2] = newColour[2] - 0.4;
-    vertexColor = newColour;
+    vec3 newColor = vec3(0);
+    newColor[0] = color[0] + color[1];
+    newColor[1] = color[1] + color[2]; 
+    newColor[2] = color[2] + color[0];
+    newColor *= 0.5;
+
+    vertexColor = newColor;
 
     vec3 newPos = position;
     newPos[1] = newPos[1] - 1.5;

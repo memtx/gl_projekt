@@ -15,8 +15,9 @@ void main()
     */
     vertexColor = color;
     
-    //vec3 newPos = position;
-    //newPos[1] = newPos[1] - 0.7;
-    //gl_Position = vec4(newPos * 0.25, 1);
-    gl_Position = vec4(position, 1.0f);
+    vec3 newPos = position;
+    newPos[1] = newPos[1] - 1.7;
+    newPos[0] -= 0.5;
+    gl_Position = vec4(newPos * 0.25, 1);
+    //gl_Position = vec4(position, 1.0f);
 }
