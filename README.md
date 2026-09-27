@@ -1,0 +1,1 @@
+školní projekt cílený na naučení práce s grafickým pipelinem
