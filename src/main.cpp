@@ -1,11 +1,4 @@
-/*
- * Copyright (c) 2026 Martin Němec
- *
- * File: main.cpp
- * Description:  Fixed Function Pipeline.
- */
-
- #define GLAD_GL_IMPLEMENTATION
+#define GLAD_GL_IMPLEMENTATION
 
 //Include the standard C++ headers  
 #include <stdlib.h>
@@ -14,9 +7,13 @@
 #include <fstream>
 
 #include "Application.h"
+#include "DrawableObject.h"
+#include "Model.h"
 
 #include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
 #include "models/tree.h"
+#include "models/OpenGL.h"
+#include "../vsbLogin.h"
 
 
 static void error_callback(int error, const char* description){ fputs(description, stderr); }
@@ -66,6 +63,9 @@ int main(void)
 	Application *app = new Application(); 
 	app->Init();
 
+	DrawableObject *Do = new DrawableObject();
+	Model *m = new Model();
+
 	// Sets the key callback
 	glfwSetKeyCallback(app->window, key_callback);
 	//glfwSetCursorPosCallback(window, cursor_callback);
@@ -93,12 +93,12 @@ int main(void)
 	GLuint VBO = 0;
 	glGenBuffers(1, &VBO); // generate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(sphere), sphere, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vsbLogin), vsbLogin, GL_STATIC_DRAW);
 
 	GLuint VBO_2 = 0;
 	glGenBuffers(1, &VBO_2); // generate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(tree), tree, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(opengl), opengl, GL_STATIC_DRAW);
 
 	//============================
 
@@ -135,10 +135,10 @@ int main(void)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 
 	// Create and compile the vertex and fragment shaders
-	GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/basic.vert");
-	GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/basic.frag");
+	GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/2_rotation.vert");
+	GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 
-	GLuint vertexShader2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/second.vert");
+	//GLuint vertexShader2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/secondBasic.vert");
 
 	//Create and link the shader program 
 	GLuint shaderProgram = glCreateProgram();	
@@ -146,13 +146,16 @@ int main(void)
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
 
-	GLuint shaderProgram2 = glCreateProgram();
-	glAttachShader(shaderProgram2, fragmentShader);
-	glAttachShader(shaderProgram2, vertexShader2);
-	glLinkProgram(shaderProgram2);
-
 	glEnable(GL_DEPTH_TEST);
-	while (!glfwWindowShouldClose(app->window))
+
+
+	glUseProgram(shaderProgram);
+	int alfaLocation = glGetUniformLocation(shaderProgram, "alfa");
+	float localAlfa = 0;
+	glUniform1f(alfaLocation, localAlfa);
+	glUseProgram(0);
+
+	while (!glfwWindowShouldClose(app->window)) 
 	{
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -165,23 +168,31 @@ int main(void)
    
 		
 		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO_2);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(tree)); //mode, first (start index?), count
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(vsbLogin)); //mode, first (start index?), count
 		
-		
-		glUseProgram(shaderProgram2);
+		/*
+		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(sphere));
+		*/
 		
+		if(localAlfa > 360)
+			localAlfa = 0;
+		else
+			localAlfa += 0.01f;
+  		glUniform1f(alfaLocation, localAlfa);
+		glUseProgram(0);
+	 
 
 		// Display the rendered frame and process events
 		glfwSwapBuffers(app->window);
 		glfwPollEvents();
-	}
+	} 
 	glfwDestroyWindow(app->window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-
+ 
 	/*
 	===================== první ============================
 	float ratio = width / (float)height;

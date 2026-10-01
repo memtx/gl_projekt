@@ -91,8 +91,12 @@ add_executable(zpgproj
     #include/glutils.cpp
     #include/glutils.h
     src/Application.cpp
-    #src/Application.h
-    )
+    src/DrawableObject.cpp
+    src/Model.cpp
+    src/Shader.cpp
+    src/ShaderProgram.cpp
+    src/Transformation.cpp
+)
 
 
 # Include the GLFW, GLM, and GLEW directories
