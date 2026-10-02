@@ -32,7 +32,7 @@ public:
 	GLFWwindow* window;
 
     //initialize openGL and its libraries. exits on failure.
-    void Init();
+    void Init(int width, int height, const char *windowName);
     
     GLuint createShaderFromFile(GLenum shaderType, const char* shaderFile);
 

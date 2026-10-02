@@ -1,6 +1,6 @@
 #include "Application.h"
 
-void Application::Init()
+void Application::Init(int width, int height, const char *windowName)
 {
     // Initialize GLFW
 	if (!glfwInit())
@@ -14,7 +14,7 @@ void Application::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE,
 	GLFW_OPENGL_CORE_PROFILE);  //*/
 
-	this->window = glfwCreateWindow(800, 600, "ZPG", NULL, NULL);
+	this->window = glfwCreateWindow(width, height, windowName, NULL, NULL);
 	if (!this->window)
 	{
 		glfwTerminate();

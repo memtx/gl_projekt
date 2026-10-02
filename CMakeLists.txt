@@ -11,7 +11,7 @@ execute_process(
         OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-set(HOMEBREW_PREFIX .)
+set(HOMEBREW_PREFIX ${CMAKE_SOURCE_DIR})
 message(STATUS "Homebrew prefix: ${HOMEBREW_PREFIX}")
 
 # Find the glad include directory
@@ -105,6 +105,7 @@ target_include_directories(zpgproj PRIVATE
         ${GLM_INCLUDE_DIR}
         ${GLEW_INCLUDE_DIR}
         ${GLAD_INCLUDE_DIR}
+        ${ASSIMP_INCLUDE_DIR}
         "./src/"
 )
 

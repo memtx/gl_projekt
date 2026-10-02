@@ -61,10 +61,11 @@ glm::mat4 Model = glm::mat4(1.0f);
 int main(void)
 {
 	Application *app = new Application(); 
-	app->Init();
+	app->Init(800, 600, "ZPG Projekt");
 
 	DrawableObject *Do = new DrawableObject();
-	Model *m = new Model();
+	Model *model_tree = new Model(tree, sizeof(tree));
+
 
 	// Sets the key callback
 	glfwSetKeyCallback(app->window, key_callback);
@@ -83,62 +84,10 @@ int main(void)
 	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
     0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
 	}; 
- 
-	GLuint VBO_points = 0; //vpodstatě pointer/index na paměť ke které nemáme přístup
-	glGenBuffers(1, &VBO_points); //vygeneruje v kontextu místo na ten odkaz, a předá nám ho
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_points); //nataví GL_ARRAY_BUFFER v kontextu na odkaz z VBO_points
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW); //nastaví do GL_ARRAY_BUFFER (nyní objekt z VBO_points) data a řekne jak se mají používat
-
-	//vertex buffer object (VBO)
-	GLuint VBO = 0;
-	glGenBuffers(1, &VBO); // generate the VBO
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vsbLogin), vsbLogin, GL_STATIC_DRAW);
-
-	GLuint VBO_2 = 0;
-	glGenBuffers(1, &VBO_2); // generate the VBO
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(opengl), opengl, GL_STATIC_DRAW);
-
-	//============================
-
-	GLuint VAO_points = 0;
-	glGenVertexArrays(1, &VAO_points); //vygeneruje odkaz na VAO a napíše ho do VAO_points
-	glBindVertexArray(VAO_points);  //nastaví vertex array v kontextu na objekt odkázaný z VAO_points
-	glEnableVertexAttribArray(0); // zapne čtení dat. VAO bude mít 2 prvky (nebo listy prvků)
-	glEnableVertexAttribArray(1); //druhý atribut je normal vector
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_points); //nastaví GL_ARRAY_BUFFER na objekt z VBO_points (je třeba kvůli dřívějším objektům co to nastavily na svoje VBO)
-	// index, number of components, data type, normalized, vertex stride (velikost jedné skupiny, např zde 6x float na jeden prvek, takže stride==24), offset od začátku prvku
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)0);   //takhle budou hodnoty předávány fragment/vertex shaderu
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (GLvoid*)(3*sizeof(float)));
-
-
-	//Vertex Array Object (VAO)
-	GLuint VAO = 0;
-	glGenVertexArrays(1, &VAO); //generate the VAO
-	glBindVertexArray(VAO); //bind the VAO
-	glEnableVertexAttribArray(0); //enable vertex attributes
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// index, number of components, data type, normalized, vertex stride, offset
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-
-	GLuint VAO_2 = 0;
-	glGenVertexArrays(1, &VAO_2); //generate the VAO
-	glBindVertexArray(VAO_2); //bind the VAO
-	glEnableVertexAttribArray(0); //enable vertex attributes
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_2);
-	// index, number of components, data type, normalized, vertex stride, offset
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 
 	// Create and compile the vertex and fragment shaders
 	GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/2_rotation.vert");
 	GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
-
-	//GLuint vertexShader2 = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/secondBasic.vert");
 
 	//Create and link the shader program 
 	GLuint shaderProgram = glCreateProgram();	
@@ -165,12 +114,16 @@ int main(void)
 		glBindVertexArray(VAO_points);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(points)); //mode, first count
 		*/
-   
-		
+		glUseProgram(shaderProgram);
+		model_tree->bindVAO();
+		glDrawArrays(GL_TRIANGLES,0, model_tree->dataSize);
+		model_tree->unbindVAO();
+
+		/*
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(vsbLogin)); //mode, first (start index?), count
-		
+		*/
 		/*
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
@@ -192,56 +145,4 @@ int main(void)
 	glfwDestroyWindow(app->window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
- 
-	/*
-	===================== první ============================
-	float ratio = width / (float)height;
-	glViewport(0, 0, width, height);
-
-	
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-
-
-	while (!glfwWindowShouldClose(window))
-	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glRotatef((float)glfwGetTime() * 50.f, -0.0f, 0.f, -1.0f);
-		
-		glBegin(GL_TRIANGLES);
-			glColor3f(1.f, 1.f, 0.f);
-			glVertex3f(-0.6f, -0.4f, 0.f);
-
-			glColor3f(0.f, 1.f, 0.f);
-			glVertex3f(0.6f, -0.4f, 0.f);
-
-			glColor3f(1.f, 0.f, 0.f);
-			glVertex3f(-0.6f, 0.4f, 0.f);
-
-			//===============
-			glColor3f(1.f, 0.f, 1.f);
-			glVertex3f(0.6f, 0.4f, 0.f);
-
-			glColor3f(0.f, 1.f, 0.f);
-			glVertex3f(0.6f, -0.4f, 0.f);
-
-			glColor3f(1.f, 0.f, 0.f);
-			glVertex3f(-0.6f, 0.4f, 0.f);
-
-
-
-		glEnd();
-		glfwSwapBuffers(window);
-		
-		glfwPollEvents();
-	}
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
-
-	*/
 }
