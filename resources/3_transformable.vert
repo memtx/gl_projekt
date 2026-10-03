@@ -4,12 +4,6 @@ uniform vec3 posVec = vec3(0.0f, 0.0f, 0.0f);
 uniform vec3 rotVec = vec3(0.0f, 0.0f, 0.0f);
 uniform vec3 scaleVec = vec3(1.0f, 1.0f, 1.0f);
 
-/*
-uniform float[3] posVec = {0,0,0};
-uniform float[3] rotVec = {0,0,0};
-uniform float[3] scaleVec = {1,1,1};
-*/
-
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 color;
 

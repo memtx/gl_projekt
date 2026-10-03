@@ -20,6 +20,8 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
+#include <functional>
+
 //#include "./glutils.h"
 #include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
 #include "models/tree.h"
@@ -38,6 +40,8 @@ class Scene;
 
 class Application
 {
+private:
+
 public:
     // Pointer to the GLFW window
 	GLFWwindow *window;
@@ -46,4 +50,9 @@ public:
     //initialize openGL and its libraries. exits on failure.
     void Init(int width, int height, const char *windowName);
     void RunLoop();
+
+    std::function<void()> callback_preDraw;
+    std::function<void()> callback_postDraw;    
+    void (*callback_keyPress)(GLFWwindow* window, int key, int scancode, int action, int mods); //has to be set before running app->init()!!!!!
+    
 };

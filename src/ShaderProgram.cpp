@@ -33,18 +33,34 @@ ShaderProgram::ShaderProgram(int shaderCount, ...)
 }
 
 void ShaderProgram::Use()
+{ glUseProgram(id); }
+
+void ShaderProgram::Disuse()
+{ glUseProgram(0); }
+
+bool ShaderProgram::HasAllTransforms()
+{ return this->posVecLoc != -1 && this->rotVecLoc != -1 && this-> scaleVecLoc != -1; }
+
+void ShaderProgram::setTransform(GLfloat pX, GLfloat pY, GLfloat pZ, GLfloat rX, GLfloat rY, GLfloat rZ, GLfloat sX, GLfloat sY, GLfloat sZ)
 {
-    glUseProgram(id); 
+    if(!HasAllTransforms())
+        return;
+
+    this->Use();
+    glUniform3f(rotVecLoc, rX, rY, rZ);
+    glUniform3f(posVecLoc, pX, pY, pZ);
+    glUniform3f(scaleVecLoc, sX, sY, sZ);
+    this->Disuse();
 }
 
 void ShaderProgram::setTransform(Transform *t)
 {
-    glUseProgram(id);
-    glm::vec3 asd = t->pos;
+    if(!HasAllTransforms())
+        return;
 
-    //glUniform3fv(rotVecLoc, 1, &(t->rot[0]));
-    glUniform3f(rotVecLoc, t->rot.x, t->rot.y, t->rot.z);
-    glUniform3f(posVecLoc, t->pos.x, t->pos.y, t->pos.z);
-    glUniform3f(scaleVecLoc, t->scale.x, t->scale.y, t->scale.z);
-    glUseProgram(0);
+    this->Use();
+    glUniform3fv(rotVecLoc, 1, &(t->rot[0]));
+    glUniform3fv(posVecLoc, 1, &(t->pos[0]));
+    glUniform3fv(scaleVecLoc, 1, &(t->scale[0]));
+    this->Disuse();
 }

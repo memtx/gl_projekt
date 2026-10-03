@@ -45,9 +45,7 @@ void Scene::RemoveObject(DrawableObject *obj)
 }
 
 std::vector<Scene*>* Scene::GetChildren()
-{
-    return &children;
-}
+{ return &children; }
 
 void Scene::DrawAllChildren()
 {

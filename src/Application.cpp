@@ -41,56 +41,15 @@ void Application::Init(int width, int height, const char *windowName)
 	int major, minor, revision;
 	glfwGetVersion(&major, &minor, &revision);
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
+ 
+    glEnable(GL_DEPTH_TEST);
 
-    rootScene = new Scene();
+    rootScene = nullptr;
+    glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
 }
-
-DrawableObject *drawObj;
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-    switch(key)
-    {
-        case 'A':
-            drawObj->transform->pos.x -= 1;
-            break;
-        case 'D': 
-            drawObj->transform->pos.x += 1;
-            break;
-
-        case 'W':
-            drawObj->transform->scale *= 1.1;
-            break;
-        case 'S':
-            drawObj->transform->scale /= 1.1;
-            break;
-
-    }
-        
-
-	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-}
-
-
 
 void Application::RunLoop()
 {
-	Model *model_tree = new Model(tree, sizeof(tree));
- 
-	Shader *fragmentShader = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
-	Shader *vertexShader = new Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
-
-	ShaderProgram *sp = new ShaderProgram(2, fragmentShader, vertexShader); 
-	Transform tr(glm::vec3(0));
-        printf("%f\n",tr.scale.x);
-    drawObj = new DrawableObject(model_tree, sp, &tr);
-
-    glfwSetKeyCallback(window, key_callback);
-
-    rootScene->AddObject(drawObj);
 
 
 	while (!glfwWindowShouldClose(this->window)) 
@@ -98,18 +57,18 @@ void Application::RunLoop()
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+        if(callback_preDraw)
+            callback_preDraw();
 
-		if(drawObj->transform->rot.x > 360)
-			drawObj->transform->rot.x = 0;
-		else
-			drawObj->transform->rot.x += 0.01f;
-
-
-        rootScene->DrawAllChildren();
-
+        if(rootScene)
+            rootScene->DrawAllChildren(); //recursive
+        
+        if(callback_postDraw)
+            callback_postDraw();
 
 		// Display the rendered frame and process events
 		glfwSwapBuffers(window);
+
 		glfwPollEvents();
 	}
 		 

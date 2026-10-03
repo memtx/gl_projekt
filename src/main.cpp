@@ -8,16 +8,14 @@
 
 #include "Application.h"
 
+#include "models/bushes.h"
+#include "models/triangle.h"
+
+Application *app = new Application(); 
+
+
 static void error_callback(int error, const char* description){ fputs(description, stderr); }
 
-/*
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-}
-*/
 static void window_focus_callback(GLFWwindow* window, int focused){ printf("window_focus_callback \n"); }
 
 static void window_iconify_callback(GLFWwindow* window, int iconified){ printf("window_iconify_callback \n"); }
@@ -33,39 +31,89 @@ static void button_callback(GLFWwindow* window, int button, int action, int mode
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 } 
 
-//GLM test
 
-/*
-//==== cv 1 ======
-// Projection matrix : 45degree Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.01f, 100.0f);
 
-// Camera matrix
-glm::mat4 View = glm::lookAt(
-	glm::vec3(10, 10, 10), // Camera is at (4,3,-3), in World Space
-	glm::vec3(0, 0, 0), // and looks at the origin
-	glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-	);
-// Model matrix : an identity matrix (model will be at the origin)
-glm::mat4 Model = glm::mat4(1.0f);
-*/
+Scene first = Scene();
+Scene second = Scene();
+Transform globalOffset = Transform();
 
+static void keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	switch(key)
+	{
+		case 'A':
+			globalOffset.pos.x -= 1;
+			break;
+		case 'D': 
+			globalOffset.pos.x += 1;
+			break;
+
+		case 'W':
+			globalOffset.scale *= 1.1;
+			break;
+		case 'S':
+			globalOffset.scale /= 1.1;
+			break;
+
+		case '1':
+			app->rootScene = &first;
+			printf("scene changed to first\n");
+			break;
+
+		case '2':
+			app->rootScene = &second;
+			printf("scene changed to second\n");
+			break;
+
+		case '3':
+			app->rootScene = nullptr;
+			printf("scene changed to empty\n");
+			break;
+	}
+	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
+}
 
 int main(void)
 {
-	Application *app = new Application(); 
-	app->Init(800, 600, "ZPG Projekt");
-
-	// Sets the key callback
-	//glfwSetKeyCallback(app->window, key_callback);
+	app->callback_keyPress = keypress_callback;	
+	
 	//glfwSetCursorPosCallback(window, cursor_callback);
 	glfwSetMouseButtonCallback(app->window, button_callback);
-	glfwSetWindowFocusCallback(app->window, window_focus_callback);
-	glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
+	//glfwSetWindowFocusCallback(app->window, window_focus_callback);
+	//glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
 	glfwSetWindowSizeCallback(app->window, window_size_callback);
 
-	glEnable(GL_DEPTH_TEST);
+	app->Init(800, 600, "ZPG Projekt");
+
+
+	Model *model_tree = new Model(tree, sizeof(tree));
+	Model *model_bushes = new Model(bushes, sizeof(bushes));
+ 
+	Shader *fragmentShader = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	Shader *vertexShader = new Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
+
+	ShaderProgram *sp = new ShaderProgram(2, fragmentShader, vertexShader); 
+    DrawableObject *obj_tree = new DrawableObject(model_tree, sp, &globalOffset);
+	DrawableObject *obj_bushes = new DrawableObject(model_bushes, sp, &globalOffset);
+
 	
+	first.AddObject(obj_tree);
+	
+	second.AddObject(obj_bushes);
+
+	app->rootScene = &first;
+	
+	app->callback_preDraw = [obj_tree]()
+	{
+		if(obj_tree->transform->rot.x > 360)
+			obj_tree->transform->rot.x = 0;
+		else
+			obj_tree->transform->rot.x += 0.01f;
+	};
+
 	app->RunLoop();
 
 
