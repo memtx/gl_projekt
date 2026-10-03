@@ -1,16 +1,20 @@
 #pragma once
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
+#include "Application.h"
+#include "ShaderProgram.h"
+#include "Transform.h"
 
 class DrawableObject
 {
 private:
 
+
 public:
+    ShaderProgram *shaderProgram = nullptr;  
+    Transform transform();
+    
     DrawableObject();
+    
 
     
 

@@ -16,6 +16,7 @@ private:
 public:
     const ModelDataLayout modelLayout;
     const size_t dataSize;
+    const std::string path;
 
     Model(const float *data, int sizeOfData, ModelDataLayout modelDataType = ModelDataLayout::L_3COORD3NORMAL);
     void bindVAO();

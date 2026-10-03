@@ -24,6 +24,7 @@
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 //#include "./glutils.h"
+#include <string>
 
 class Application
 {
@@ -33,9 +34,6 @@ public:
 
     //initialize openGL and its libraries. exits on failure.
     void Init(int width, int height, const char *windowName);
-    
-    GLuint createShaderFromFile(GLenum shaderType, const char* shaderFile);
-
 };
 
 #endif

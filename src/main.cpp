@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "DrawableObject.h"
 #include "Model.h"
+#include "Shader.h"
 
 #include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
 #include "models/tree.h"
@@ -86,13 +87,15 @@ int main(void)
 	}; 
 
 	// Create and compile the vertex and fragment shaders
-	GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/2_rotation.vert");
-	GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	//GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/2_rotation.vert");
+	//GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	Shader *fragmentShader = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	Shader *vertexShader = new Shader(GL_VERTEX_SHADER, "resources/2_rotation.vert");
 
 	//Create and link the shader program 
 	GLuint shaderProgram = glCreateProgram();	
-	glAttachShader(shaderProgram, fragmentShader);
-	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader->ref);
+	glAttachShader(shaderProgram, vertexShader->ref);
 	glLinkProgram(shaderProgram);
 
 	glEnable(GL_DEPTH_TEST);
