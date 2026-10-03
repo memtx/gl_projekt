@@ -86,57 +86,34 @@ int main(void)
     0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
 	}; 
 
-	// Create and compile the vertex and fragment shaders
-	//GLuint vertexShader = app->createShaderFromFile(GL_VERTEX_SHADER, "resources/2_rotation.vert");
-	//GLuint fragmentShader = app->createShaderFromFile(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	Shader *fragmentShader = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	Shader *vertexShader = new Shader(GL_VERTEX_SHADER, "resources/2_rotation.vert");
 
-	//Create and link the shader program 
-	GLuint shaderProgram = glCreateProgram();	
-	glAttachShader(shaderProgram, fragmentShader->ref);
-	glAttachShader(shaderProgram, vertexShader->ref);
-	glLinkProgram(shaderProgram);
+	ShaderProgram *sp = new ShaderProgram(2, fragmentShader, vertexShader); 
+	DrawableObject *drawObj = new DrawableObject(model_tree, sp);
 
 	glEnable(GL_DEPTH_TEST);
-
-
-	glUseProgram(shaderProgram);
-	int alfaLocation = glGetUniformLocation(shaderProgram, "alfa");
+	
+	glUseProgram(sp->id);
+	int alfaLocation = glGetUniformLocation(sp->id, "alfa");
 	float localAlfa = 0;
 	glUniform1f(alfaLocation, localAlfa);
 	glUseProgram(0);
+	
 
 	while (!glfwWindowShouldClose(app->window)) 
 	{
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		/*
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO_points);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(points)); //mode, first count
-		*/
-		glUseProgram(shaderProgram);
-		model_tree->bindVAO();
-		glDrawArrays(GL_TRIANGLES,0, model_tree->dataSize);
-		model_tree->unbindVAO();
-
-		/*
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vsbLogin)); //mode, first (start index?), count
-		*/
-		/*
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(sphere));
-		*/
+		drawObj->Draw();
 		
 		if(localAlfa > 360)
 			localAlfa = 0;
 		else
 			localAlfa += 0.01f;
+
+		glUseProgram(sp->id);
   		glUniform1f(alfaLocation, localAlfa);
 		glUseProgram(0);
 	 
@@ -144,8 +121,10 @@ int main(void)
 		// Display the rendered frame and process events
 		glfwSwapBuffers(app->window);
 		glfwPollEvents();
-	} 
+	}
+		 
 	glfwDestroyWindow(app->window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
+
 }

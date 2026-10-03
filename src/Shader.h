@@ -8,7 +8,7 @@ private:
 
 public:
     const int GL_TYPEOF_SHADER; 
-    const GLuint ref;
+    const GLuint id;
 
     Shader(GLenum GL_TYPEOF_SHADER, const char* path);
 };

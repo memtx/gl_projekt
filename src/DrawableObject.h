@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
+#include "Model.h"
 
 class DrawableObject
 {
@@ -11,11 +12,10 @@ private:
 
 public:
     ShaderProgram *shaderProgram = nullptr;  
-    Transform transform();
+    Model *model = nullptr;
+    Transform transform = Transform();
     
-    DrawableObject();
-    
+    DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform transform = Transform());
 
-    
-
+    void Draw();
 };
