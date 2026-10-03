@@ -9,11 +9,11 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform *t)
 
 void DrawableObject::Draw()
 {
-    glUseProgram(shaderProgram->id);
+    shaderProgram->setTransform(transform);
 
+    glUseProgram(shaderProgram->id);
     model->bindVAO();
     glDrawArrays(model->gl_drawType,0, model->dataSize);
     model->unbindVAO();
-
     glUseProgram(0);
 }

@@ -63,16 +63,6 @@ int main(void)
 	glfwSetWindowFocusCallback(app->window, window_focus_callback);
 	glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
 	glfwSetWindowSizeCallback(app->window, window_size_callback);
- 
-	const float points[] = { //pozice (x,y,z, procentuální od středu), barva (procentální) 
-	-0.5f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
-	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-
-   -0.5f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
-	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-    0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
-	}; 
 
 	glEnable(GL_DEPTH_TEST);
 	

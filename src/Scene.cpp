@@ -52,7 +52,7 @@ std::vector<Scene*>* Scene::GetChildren()
 void Scene::DrawAllChildren()
 {
     for(Scene *child : children)
-    { child->DrawAllChildren(); }   
+    { child->DrawAllChildren(); }
 
     for(DrawableObject *obj: objects)
     { obj->Draw(); }
