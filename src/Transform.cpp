@@ -1,12 +1,8 @@
 #include "Transform.h"
 
-Transform::Transform(GLdouble x, GLdouble y, GLdouble z, GLdouble roll, GLdouble pitch, GLdouble yaw)
+Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
 {
-    x = x;
-    y = y;
-    z = z;
-
-    roll = roll;
-    pitch = pitch;
-    yaw = yaw;
+    pos = pos;
+    rot = rot;
+    scale = scale;
 }

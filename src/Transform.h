@@ -6,13 +6,10 @@ class Transform
 private:
 
 public:
-    GLdouble x = 0;
-    GLdouble y = 0;
-    GLdouble z = 0;
+    glm::vec3 pos;
+    glm::vec3 rot;
+    glm::vec3 scale;
+     
 
-    GLdouble roll = 0.0f;
-    GLdouble pitch = 0.0f;
-    GLdouble yaw = 0.0f;
-
-    Transform(GLdouble x = 0.0f, GLdouble y = 0.0f, GLdouble z = 0.0f, GLdouble roll = 0.0f, GLdouble pitch = 0.0f, GLdouble yaw = 0.0f);
+    Transform(glm::vec3 pos = glm::vec3(0,0,0), glm::vec3 rot = glm::vec3(0,0,0), glm::vec3 scale = glm::vec3(1,1,1));
 };

@@ -1,7 +1,5 @@
 #include "Model.h"
 
-#include <stdio.h>
-
 Model::Model(const float *data, int sizeOfData, GLenum drawType, ModelDataLayout modelDataLayout) 
  : gl_drawType(drawType), modelLayout(modelDataLayout), dataSize(sizeOfData)
 {

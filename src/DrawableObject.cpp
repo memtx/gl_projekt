@@ -1,6 +1,6 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform *t)
 {
     model = m;
     shaderProgram = sp;

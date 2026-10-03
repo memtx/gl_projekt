@@ -1,14 +1,11 @@
 //opengl minimálně 3.3, ideálně 4.6
-
-#ifndef APPLICATION_H
-#define APPLICATION_H
-
-
+#pragma once
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-
+#include <string>
+#include <vector>
 
 //include glad
 //#include <glad/include/glad/glad.h>
@@ -24,16 +21,29 @@
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 //#include "./glutils.h"
-#include <string>
+#include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
+#include "models/tree.h"
+//#include "models/OpenGL.h"
+#include "../vsbLogin.h"
+
+
+#include "Shader.h"
+#include "ShaderProgram.h"
+#include "Transform.h"
+#include "Model.h"
+#include "DrawableObject.h"
+#include "Scene.h"
+
+class Scene;
 
 class Application
 {
 public:
     // Pointer to the GLFW window
-	GLFWwindow* window;
+	GLFWwindow *window;
+    Scene *rootScene;
 
     //initialize openGL and its libraries. exits on failure.
     void Init(int width, int height, const char *windowName);
+    void RunLoop();
 };
-
-#endif

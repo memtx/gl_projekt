@@ -81,8 +81,8 @@ find_library(ASSIMP_LIB NAMES assimp HINTS ${HOMEBREW_PREFIX}/lib)
     message(STATUS "Found assimp library: ${ASSIMP_LIB}")
 else()
     message(FATAL_ERROR "Could not find assimp library")
-endif() 
- 
+endif()
+
 # include_directories(./lib/soil/include)
 # add_library(SOIL STATIC ${SOIL_SOURCES})
 
@@ -97,6 +97,7 @@ add_executable(zpgproj
     src/ShaderProgram.cpp
     src/Transformation.cpp
     src/Transform.cpp
+    src/Scene.cpp
 )
 
 
