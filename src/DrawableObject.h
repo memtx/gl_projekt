@@ -11,13 +11,15 @@ class Transform;
 class DrawableObject
 {
 private:
-
+    bool nonHeapTransformShouldDelete = false;
 
 public:
-    ShaderProgram *shaderProgram = nullptr;  
-    Model *model = nullptr;
-    Transform *transform = nullptr;
+    ShaderProgram *shaderProgram;  
+    Model *model;
+    Transform *transform;
     
     DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform *transform = nullptr);
+    DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform transform = Transform());
+    ~DrawableObject();
     void Draw();
 };

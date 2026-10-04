@@ -8,15 +8,19 @@
 #include <string>
 #include <vector>
 
+
+
 #include "models/bushes.h"
 #include "models/triangle.h"
-//#include "./glutils.h"
-#include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
+#include "models/sphere.h" //models are 3xfloat (pos), 3xfloat (normal)
 #include "models/tree.h"
-//#include "models/OpenGL.h"
+#include "models/OpenGL.h"
+#include "models/plain.h"
 #include "../vsbLogin.h"
 
 #include "Application.h"
+
+typedef glm::vec3 vec3;
 
 Application app = Application(); 
 
@@ -99,35 +103,37 @@ int main(void)
 	Model model_bushes = Model(bushes, sizeof(bushes));
 	Model model_triangle = Model(triangle, sizeof(triangle));
 	Model model_login = Model(vsbLogin, sizeof(vsbLogin));
+	Model model_plain = Model(plain, sizeof(plain));
  
 	Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	Shader vertexShader = Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
-	
 	ShaderProgram sp = ShaderProgram(2, &fragmentShader, &vertexShader); 
 
 	for(int i=0; i<4; i++)
 		scenes.push_back(Scene());
 
-	DrawableObject obj_triangle = DrawableObject(&model_triangle, &sp, &globalOffset);
-	DrawableObject obj_tree = DrawableObject(&model_tree, &sp, &globalOffset);
-	DrawableObject obj_bushes = DrawableObject(&model_bushes, &sp, &globalOffset);
-	DrawableObject obj_login = DrawableObject(&model_login, &sp, &globalOffset);
-	scenes[0].AddObject(&obj_triangle);
-	scenes[1].AddObject(&obj_tree);
-	scenes[2].AddObject(&obj_bushes);
-	scenes[3].AddObject(&obj_login);
-
-
-	app.rootScene = &scenes[0];
+	globalOffset.scale = vec3(0.1, 0.1, 0.1);
+	scenes[0].AddObject(new DrawableObject(&model_login, &sp, &globalOffset));
 	
-	app.callback_preDraw = [obj_tree]()
+	for(float i=-2; i<2; i+= 0.2)
+		scenes[0].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(i,0,1), vec3(0), vec3(0.1))));
+	for(float i=-2+0.1; i<2-0.2; i+= 0.2)
+		scenes[0].AddObject(new DrawableObject(&model_bushes, &sp, Transform(vec3(i,0,1), vec3(0), vec3(0.1))));
+
+	app.rootScene = &(scenes[0]);
+	scenes[1].AddObject(new DrawableObject(&model_triangle, &sp, &globalOffset));
+	//scenes[2].AddObject(&obj_tree);
+	//scenes[3].AddObject(&obj_login);
+
+
+	app.callback_preDraw = []()
 	{
 		app.rootScene = &scenes[sceneIndex];
 
-		if(obj_tree.transform->rot.x > 360)
-			obj_tree.transform->rot.x = 0;
+		if(globalOffset.rot.x > 360)
+			globalOffset.rot.x = 0;
 		else
-			obj_tree.transform->rot.x += 0.01f;
+			globalOffset.rot.x += 0.01f;
 	};
 
 	app.RunLoop();

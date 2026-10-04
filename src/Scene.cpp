@@ -6,6 +6,15 @@ Scene::Scene()
     objects = std::vector<DrawableObject*>();
 }
 
+Scene::~Scene()
+{
+    for(Scene *sc : children)
+        delete sc;
+
+    for(DrawableObject *obj : objects)
+        delete obj;
+}
+
 std::vector<Scene*>::iterator Scene::GetIterator(Scene* child)
 {
     for(auto it = children.begin(); it != children.end(); it++)
@@ -34,6 +43,7 @@ void Scene::DeleteChild(Scene *child)
     delete child;
 }
 
+//objects pointers are deleted with the scene!
 void Scene::AddObject(DrawableObject *obj)
 {
     objects.push_back(obj);

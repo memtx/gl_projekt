@@ -16,6 +16,7 @@ private:
     std::vector<DrawableObject*>::iterator GetIterator(DrawableObject* obj);
 public:
     Scene();
+    ~Scene();
     void AddObject(DrawableObject *obj);
     void RemoveObject(DrawableObject *obj);
     void AddChild(Scene *child);

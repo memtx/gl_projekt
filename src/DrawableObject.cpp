@@ -1,10 +1,26 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform *t)
+//not using pointers is fine, the transform gets deleted by the destructor (scene must be non-ptr though)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
+{
+    model = m;
+    shaderProgram = sp;
+    transform = new Transform(t.pos, t.rot, t.scale);
+    
+    nonHeapTransformShouldDelete = true;
+}
+
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform* t)
 {
     model = m;
     shaderProgram = sp;
     transform = t;
+}
+
+DrawableObject::~DrawableObject()
+{
+    if(nonHeapTransformShouldDelete)
+        delete this->transform;
 }
 
 void DrawableObject::Draw()
