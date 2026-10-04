@@ -104,10 +104,13 @@ int main(void)
 	Model model_triangle = Model(triangle, sizeof(triangle));
 	Model model_login = Model(vsbLogin, sizeof(vsbLogin));
 	Model model_plain = Model(plain, sizeof(plain));
- 
+ 	Model model_sphere = Model(sphere, sizeof(sphere));
+
 	Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	Shader fragmentShaderYellow = Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
 	Shader vertexShader = Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
 	ShaderProgram sp = ShaderProgram(2, &fragmentShader, &vertexShader); 
+	ShaderProgram spYellow = ShaderProgram(2, &fragmentShaderYellow, &vertexShader);
 
 	for(int i=0; i<4; i++)
 		scenes.push_back(Scene());
@@ -116,9 +119,12 @@ int main(void)
 	scenes[0].AddObject(new DrawableObject(&model_login, &sp, &globalOffset));
 	
 	for(float i=-2; i<2; i+= 0.2)
-		scenes[0].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(i,0,1), vec3(0), vec3(0.1))));
+		scenes[0].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
 	for(float i=-2+0.1; i<2-0.2; i+= 0.2)
-		scenes[0].AddObject(new DrawableObject(&model_bushes, &sp, Transform(vec3(i,0,1), vec3(0), vec3(0.1))));
+		scenes[0].AddObject(new DrawableObject(&model_bushes, &sp, Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
+
+
+	scenes[0].AddObject(new DrawableObject(&model_sphere, &spYellow, Transform(vec3(0,0.8,1), vec3(0), vec3(0.1)))); 
 
 	app.rootScene = &(scenes[0]);
 	scenes[1].AddObject(new DrawableObject(&model_triangle, &sp, &globalOffset));

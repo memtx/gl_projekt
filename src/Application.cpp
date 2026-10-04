@@ -51,7 +51,6 @@ void Application::Init(int width, int height, const char *windowName)
 void Application::RunLoop()
 {
 
-
 	while (!glfwWindowShouldClose(this->window)) 
 	{
 		// Clear color and depth buffer
