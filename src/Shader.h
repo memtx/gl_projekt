@@ -6,7 +6,6 @@
 
 #include "Application.h"
 
-
 class Shader
 {
 private:

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Application.h"
+#include "Model.h"
+#include "Transform.h"
+#include "ShaderProgram.h"
 
 class ShaderProgram;
 class Model;

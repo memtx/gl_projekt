@@ -3,7 +3,8 @@
 #include <stdarg.h>
 #include <vector>
 
-#include "Application.h"
+#include "Shader.h"
+#include "Transform.h"
 
 class Shader;
 class Transform;
