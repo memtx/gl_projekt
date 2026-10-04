@@ -17,6 +17,5 @@ public:
     Transform *transform = nullptr;
     
     DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform *transform = nullptr);
-
     void Draw();
 };

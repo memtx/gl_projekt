@@ -1,5 +1,11 @@
 #pragma once
+
+#include <string>
+#include <iostream>
+#include <fstream>
+
 #include "Application.h"
+
 
 class Shader
 {

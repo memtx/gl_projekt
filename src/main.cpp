@@ -5,13 +5,20 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-
-#include "Application.h"
+#include <string>
+#include <vector>
 
 #include "models/bushes.h"
 #include "models/triangle.h"
+//#include "./glutils.h"
+#include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
+#include "models/tree.h"
+//#include "models/OpenGL.h"
+#include "../vsbLogin.h"
 
-Application *app = new Application(); 
+#include "Application.h"
+
+Application app = Application(); 
 
 
 static void error_callback(int error, const char* description){ fputs(description, stderr); }
@@ -33,17 +40,21 @@ static void button_callback(GLFWwindow* window, int button, int action, int mode
 
 
 
-Scene first = Scene();
-Scene second = Scene();
 Transform globalOffset = Transform();
+std::vector<Scene> scenes = std::vector<Scene>();
+int sceneIndex = 0;
 
 static void keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
+	if(action != GLFW_PRESS)
+		return;
 
 	switch(key)
 	{
+		case GLFW_KEY_ESCAPE:
+			glfwSetWindowShouldClose(window, GL_TRUE);
+			break;
+
 		case 'A':
 			globalOffset.pos.x -= 1;
 			break;
@@ -59,18 +70,13 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			break;
 
 		case '1':
-			app->rootScene = &first;
+			sceneIndex--;
 			printf("scene changed to first\n");
 			break;
 
 		case '2':
-			app->rootScene = &second;
+			sceneIndex++;
 			printf("scene changed to second\n");
-			break;
-
-		case '3':
-			app->rootScene = nullptr;
-			printf("scene changed to empty\n");
 			break;
 	}
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
@@ -78,43 +84,53 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 
 int main(void)
 {
-	app->callback_keyPress = keypress_callback;	
+	app.callback_keyPress = keypress_callback;	
 	
 	//glfwSetCursorPosCallback(window, cursor_callback);
-	glfwSetMouseButtonCallback(app->window, button_callback);
+	glfwSetMouseButtonCallback(app.window, button_callback);
 	//glfwSetWindowFocusCallback(app->window, window_focus_callback);
 	//glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
-	glfwSetWindowSizeCallback(app->window, window_size_callback);
+	glfwSetWindowSizeCallback(app.window, window_size_callback);
 
-	app->Init(800, 600, "ZPG Projekt");
+	app.Init(800, 600, "ZPG Projekt");
 
 
-	Model *model_tree = new Model(tree, sizeof(tree));
-	Model *model_bushes = new Model(bushes, sizeof(bushes));
+	Model model_tree = Model(tree, sizeof(tree));
+	Model model_bushes = Model(bushes, sizeof(bushes));
+	Model model_triangle = Model(triangle, sizeof(triangle));
+	Model model_login = Model(vsbLogin, sizeof(vsbLogin));
  
-	Shader *fragmentShader = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
-	Shader *vertexShader = new Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
-
-	ShaderProgram *sp = new ShaderProgram(2, fragmentShader, vertexShader); 
-    DrawableObject *obj_tree = new DrawableObject(model_tree, sp, &globalOffset);
-	DrawableObject *obj_bushes = new DrawableObject(model_bushes, sp, &globalOffset);
-
+	Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
+	Shader vertexShader = Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
 	
-	first.AddObject(obj_tree);
-	
-	second.AddObject(obj_bushes);
+	ShaderProgram sp = ShaderProgram(2, &fragmentShader, &vertexShader); 
 
-	app->rootScene = &first;
+	for(int i=0; i<4; i++)
+		scenes.push_back(Scene());
+
+	DrawableObject obj_triangle = DrawableObject(&model_triangle, &sp, &globalOffset);
+	DrawableObject obj_tree = DrawableObject(&model_tree, &sp, &globalOffset);
+	DrawableObject obj_bushes = DrawableObject(&model_bushes, &sp, &globalOffset);
+	DrawableObject obj_login = DrawableObject(&model_login, &sp, &globalOffset);
+	scenes[0].AddObject(&obj_triangle);
+	scenes[1].AddObject(&obj_tree);
+	scenes[2].AddObject(&obj_bushes);
+	scenes[3].AddObject(&obj_login);
+
+
+	app.rootScene = &scenes[0];
 	
-	app->callback_preDraw = [obj_tree]()
+	app.callback_preDraw = [obj_tree]()
 	{
-		if(obj_tree->transform->rot.x > 360)
-			obj_tree->transform->rot.x = 0;
+		app.rootScene = &scenes[sceneIndex];
+
+		if(obj_tree.transform->rot.x > 360)
+			obj_tree.transform->rot.x = 0;
 		else
-			obj_tree->transform->rot.x += 0.01f;
+			obj_tree.transform->rot.x += 0.01f;
 	};
 
-	app->RunLoop();
+	app.RunLoop();
 
 
 }

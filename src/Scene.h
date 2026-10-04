@@ -1,7 +1,11 @@
 #pragma once
+//#include "Application.h"
+#include "vector"
+
 #include "Application.h"
 
 class DrawableObject;
+
 
 class Scene
 {

@@ -1,11 +1,13 @@
 //opengl minimálně 3.3, ideálně 4.6
 #pragma once
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <functional>
 
 //include glad
 //#include <glad/include/glad/glad.h>
@@ -19,15 +21,6 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
-
-#include <functional>
-
-//#include "./glutils.h"
-#include "models/sphere.h" //modely jsou 3xfloat (pos), 3xfloat (normal)
-#include "models/tree.h"
-//#include "models/OpenGL.h"
-#include "../vsbLogin.h"
-
 
 #include "Shader.h"
 #include "ShaderProgram.h"
