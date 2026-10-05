@@ -46,11 +46,11 @@ void ShaderProgram::setTransform(GLfloat pX, GLfloat pY, GLfloat pZ, GLfloat rX,
     if(!HasAllTransforms())
         return;
 
-    this->Use();
+    //this->Use();
     glUniform3f(rotVecLoc, rX, rY, rZ);
     glUniform3f(posVecLoc, pX, pY, pZ);
     glUniform3f(scaleVecLoc, sX, sY, sZ);
-    this->Disuse();
+    //this->Disuse();
 }
 
 void ShaderProgram::setTransform(Transform *t)
@@ -58,9 +58,10 @@ void ShaderProgram::setTransform(Transform *t)
     if(!HasAllTransforms())
         return;
 
-    this->Use();
+    //this->Use();
     glUniform3fv(rotVecLoc, 1, &(t->rot[0]));
-    glUniform3fv(posVecLoc, 1, &(t->pos[0]));
     glUniform3fv(scaleVecLoc, 1, &(t->scale[0]));
-    this->Disuse();
+    glUniform3fv(posVecLoc, 1, &(t->pos[0]));
+
+    //this->Disuse();
 }

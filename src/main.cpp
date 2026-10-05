@@ -118,9 +118,9 @@ int main(void)
 	globalOffset.scale = vec3(0.1, 0.1, 0.1);
 	scenes[0].AddObject(new DrawableObject(&model_login, &sp, &globalOffset));
 	
-	for(float i=-2; i<2; i+= 0.2)
+	for(float i=-1; i<1; i+= 0.2)
 		scenes[0].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
-	for(float i=-2+0.1; i<2-0.2; i+= 0.2)
+	for(float i=-1+0.1; i<1-0.2; i+= 0.2)
 		scenes[0].AddObject(new DrawableObject(&model_bushes, &sp, Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
 
 

@@ -7,6 +7,8 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
     shaderProgram = sp;
     transform = new Transform(t.pos, t.rot, t.scale);
     
+
+
     nonHeapTransformShouldDelete = true;
 }
 
@@ -25,11 +27,27 @@ DrawableObject::~DrawableObject()
 
 void DrawableObject::Draw()
 {
+
+    if(activeShaderProgram != shaderProgram)
+    {
+        activeShaderProgram = shaderProgram;
+        glUseProgram(activeShaderProgram->id);
+        
+    }
+
     shaderProgram->setTransform(transform);
 
-    glUseProgram(shaderProgram->id);
-    model->bindVAO();
-    glDrawArrays(model->gl_drawType,0, model->dataSize);
-    model->unbindVAO();
-    glUseProgram(0);
+
+    if(activeModel != model)
+    {
+        activeModel = model;
+        activeModel->bindVAO();
+    }
+
+    glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
+    //model->unbindVAO();
+    //glUseProgram(0);
 }
+
+ShaderProgram* DrawableObject::activeShaderProgram = nullptr;
+Model* DrawableObject::activeModel = nullptr; 

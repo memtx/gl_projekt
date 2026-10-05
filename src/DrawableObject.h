@@ -12,6 +12,8 @@ class DrawableObject
 {
 private:
     bool nonHeapTransformShouldDelete = false;
+    static Model* activeModel;
+    static ShaderProgram* activeShaderProgram;
 
 public:
     ShaderProgram *shaderProgram;  
