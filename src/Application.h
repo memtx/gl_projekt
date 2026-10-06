@@ -28,6 +28,7 @@
 #include "Model.h"
 #include "DrawableObject.h"
 #include "Scene.h"
+#include "Log.h"
 
 class Scene;
 
@@ -40,10 +41,13 @@ public:
 	GLFWwindow *window;
     Scene *rootScene;
 
+    double deltaTime;
+
     //initialize openGL and its libraries. exits on failure.
     void Init(int width, int height, const char *windowName);
     void RunLoop();
 
+    void (*testCallback)();
     std::function<void()> callback_preDraw;
     std::function<void()> callback_postDraw;    
     void (*callback_keyPress)(GLFWwindow* window, int key, int scancode, int action, int mods); //has to be set before running app->init()!!!!!

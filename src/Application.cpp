@@ -11,18 +11,20 @@ void Application::Init(int width, int height, const char *windowName)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE,
+	glfwWindowHint(GLFW_OPENGL_PROFILE, 
 	GLFW_OPENGL_CORE_PROFILE);  //*/
+
+	deltaTime = glfwGetTime();
 
 	this->window = glfwCreateWindow(width, height, windowName, NULL, NULL);
 	if (!this->window)
 	{
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE); 
 	}
 
     glfwMakeContextCurrent(this->window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0); //1 for vsync, 0 for none (or to fix lag)
 
     // Initialize GLAD and load OpenGL function pointers
 	if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress))
@@ -50,6 +52,8 @@ void Application::Init(int width, int height, const char *windowName)
 
 void Application::RunLoop()
 {
+	deltaTime = glfwGetTime();
+	int frameCount = 0;
 
 	while (!glfwWindowShouldClose(this->window)) 
 	{
@@ -66,9 +70,20 @@ void Application::RunLoop()
             callback_postDraw();
 
 		// Display the rendered frame and process events
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(this->window);
 
 		glfwPollEvents();
+
+        // FPS counter
+        frameCount++;
+        double now = glfwGetTime();
+        if (now - deltaTime >= 1.0)
+        {
+            printf("FPS: %d\n", frameCount);
+            frameCount = 0;
+            deltaTime = now;
+        }
+
 	}
 		 
 	glfwDestroyWindow(this->window);

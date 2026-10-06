@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-
-
 #include "models/bushes.h"
 #include "models/triangle.h"
 #include "models/sphere.h" //models are 3xfloat (pos), 3xfloat (normal)
@@ -48,6 +46,16 @@ Transform globalOffset = Transform();
 std::vector<Scene> scenes = std::vector<Scene>();
 int sceneIndex = 0;
 
+static void drawCallback()
+{
+	{
+		app.rootScene = &scenes[sceneIndex];
+
+	
+		globalOffset.Rotate(vec3(0.01f, 0,0));
+	};
+}
+
 static void keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if(action != GLFW_PRESS)
@@ -60,17 +68,17 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			break;
 
 		case 'A':
-			globalOffset.pos.x -= 1;
+			globalOffset.Translate(vec3(-1,0,0));
 			break;
 		case 'D': 
-			globalOffset.pos.x += 1;
+			globalOffset.Translate(vec3(1,0,0));
 			break;
 
 		case 'W':
-			globalOffset.scale *= 1.1;
+			globalOffset.Scale(vec3(1.1,1,1));
 			break;
 		case 'S':
-			globalOffset.scale /= 1.1;
+			globalOffset.Scale(vec3(1/1.1,1,1));
 			break;
 
 		case '1':
@@ -85,6 +93,8 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 	}
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 }
+
+
 
 int main(void)
 {
@@ -105,17 +115,17 @@ int main(void)
 	Model model_login = Model(vsbLogin, sizeof(vsbLogin));
 	Model model_plain = Model(plain, sizeof(plain));
  	Model model_sphere = Model(sphere, sizeof(sphere));
-
+ 
 	Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	Shader fragmentShaderYellow = Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
-	Shader vertexShader = Shader(GL_VERTEX_SHADER, "resources/3_transformable.vert");
+	Shader vertexShader = Shader(GL_VERTEX_SHADER, "resources/4_true_transformable.vert");
 	ShaderProgram sp = ShaderProgram(2, &fragmentShader, &vertexShader); 
 	ShaderProgram spYellow = ShaderProgram(2, &fragmentShaderYellow, &vertexShader);
 
-	for(int i=0; i<4; i++)
+	for(int i=0; i<4; i++) 
 		scenes.push_back(Scene());
 
-	globalOffset.scale = vec3(0.1, 0.1, 0.1);
+	globalOffset.Scale(vec3(0.1, 0.1, 0.1));
 	scenes[0].AddObject(new DrawableObject(&model_login, &sp, &globalOffset));
 	
 	for(float i=-1; i<1; i+= 0.2)
@@ -127,20 +137,12 @@ int main(void)
 	scenes[0].AddObject(new DrawableObject(&model_sphere, &spYellow, Transform(vec3(0,0.8,1), vec3(0), vec3(0.1)))); 
 
 	app.rootScene = &(scenes[0]);
-	scenes[1].AddObject(new DrawableObject(&model_triangle, &sp, &globalOffset));
+	scenes[1].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(0), vec3(0), vec3(0.1))));
 	//scenes[2].AddObject(&obj_tree);
 	//scenes[3].AddObject(&obj_login);
 
 
-	app.callback_preDraw = []()
-	{
-		app.rootScene = &scenes[sceneIndex];
-
-		if(globalOffset.rot.x > 360)
-			globalOffset.rot.x = 0;
-		else
-			globalOffset.rot.x += 0.01f;
-	};
+	app.callback_preDraw = drawCallback;
 
 	app.RunLoop();
 

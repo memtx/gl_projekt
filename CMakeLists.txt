@@ -97,6 +97,7 @@ add_executable(zpgproj
     src/ShaderProgram.cpp
     src/Transform.cpp
     src/Scene.cpp
+    src/Log.cpp
 )
 
 

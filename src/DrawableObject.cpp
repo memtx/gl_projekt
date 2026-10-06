@@ -5,9 +5,7 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
 {
     model = m;
     shaderProgram = sp;
-    transform = new Transform(t.pos, t.rot, t.scale);
-    
-
+    transform = new Transform(t.GetPos(), t.GetRot(), t.GetScale());
 
     nonHeapTransformShouldDelete = true;
 }
@@ -31,8 +29,7 @@ void DrawableObject::Draw()
     if(activeShaderProgram != shaderProgram)
     {
         activeShaderProgram = shaderProgram;
-        glUseProgram(activeShaderProgram->id);
-        
+        activeShaderProgram->Use();  
     }
 
     shaderProgram->setTransform(transform);
