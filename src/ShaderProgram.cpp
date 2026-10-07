@@ -25,6 +25,7 @@ ShaderProgram::ShaderProgram(int shaderCount, ...)
     {
         glAttachShader(id, va_arg(args, Shader*)->id);
 	}
+    va_end(args);
     glLinkProgram(id);
     
     trMatLoc = GetVarLocation("trMat");

@@ -1,3 +1,4 @@
+#pragma once
 /**
  * @file suzi_flat.h
  *

@@ -1,12 +1,20 @@
 #include "Log.h"
 
-void Log::Warn(const char *msg)
+void Log::Warn(const char *msg, char *extra)
 {
-    printf(" (Warning) %s\n", msg);
+    if(extra == nullptr)
+        printf("WARNING: %s (%s)\n", msg, "");
+    else
+        printf("WARNING: %s (%s)\n", msg, extra);
+
 }
 
-void Log::Error(const char *msg)
+void Log::Error(const char *msg, char *extra)
 {
-    printf("ERROR: %s\n", msg);
+    if(extra == nullptr)
+        printf("ERROR: %s (%s)\n", msg, "");
+    else
+        printf("ERROR: %s (%s)\n", msg, extra);
+        
     exit(-1);
 }

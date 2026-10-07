@@ -1,11 +1,13 @@
+#pragma once
 #include <iostream>
+#include <stdarg.h>
 
 static class Log
 {
 private:
 
 public:
-    void Warn(const char *msg);
-    void Error(const char *msg);
+    void Warn(const char *msg, char *extra = nullptr);
+    void Error(const char *msg, char *extra = nullptr);
 
 } Log;

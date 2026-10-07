@@ -1,3 +1,4 @@
+#pragma once
 // Generated automatically by Blender
 // Text: ABC0007
 // Format: x, y, z, nx, ny, nz
