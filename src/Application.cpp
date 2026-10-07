@@ -1,5 +1,6 @@
 #include "Application.h"
 
+
 void Application::Init(int width, int height, const char *windowName)
 {
     // Initialize GLFW

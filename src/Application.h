@@ -12,7 +12,6 @@
 //include glad
 //#include <glad/include/glad/glad.h>
 #include <glad/include/glad/gl.h>
-
 //Include GLFW  
 #include <GLFW/glfw3.h>  
 //Include GLM    
@@ -30,6 +29,8 @@
 #include "Scene.h"
 #include "Log.h"
 
+
+
 class Scene;
 
 class Application
@@ -46,6 +47,11 @@ public:
     //initialize openGL and its libraries. exits on failure.
     void Init(int width, int height, const char *windowName);
     void RunLoop();
+
+    void LoadModels();
+    void LoadShaders();
+    void LoadObjects();
+    
 
     void (*testCallback)();
     std::function<void()> callback_preDraw;

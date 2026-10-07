@@ -61,7 +61,7 @@ void Transform::Rotate(vec3 r) //Ideálně rotovat po osách zvlášť. Pro tran
 }
 
 void Transform::Scale(vec3 s)
-{ this->scale += s; mat = glm::scale(mat, s); }
+{ this->scale *= s; mat = glm::scale(mat, s); }
 
 void Transform::Translate(vec3 t)
 { this->pos += t; mat = glm::translate(mat, t); }

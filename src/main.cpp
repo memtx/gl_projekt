@@ -65,10 +65,10 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			break;
 
 		case 'W':
-			globalOffset.Scale(vec3(0.1));
+			globalOffset.Scale(vec3(1/1.1));
 			break;
 		case 'S':
-			globalOffset.Scale(vec3(-0.1));
+			globalOffset.Scale(vec3(1.1));
 			break;
 
 		case 'Q':
