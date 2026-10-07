@@ -14,13 +14,25 @@ private:
     vec3 pos; //only for tracking the current value 
     vec3 rot; //only for tracking the current value
     vec3 scale; //only for tracking the current value
-    
-public:
-    mat4 mat; 
 
-    vec3 GetPos(){ return pos; }
-    vec3 GetRot(){ return rot; }
-    vec3 GetScale(){ return scale; }
+    std::vector<Transform*> children;
+    mat4 mat; //holding current object's transforms
+public:
+    mat4 resultMat; //holding the transforms after processing with root
+
+    const vec3 GetPos(){ return pos; }
+    const vec3 GetRot(){ return rot; }
+    const vec3 GetScale(){ return scale; }
+    //void SetPos(vec3 p) { pos=p; }; //currently don't know how, and don't have enough time to dilly-dally with QOL features
+    //void SetRot(vec3 r) { rot=r; };
+    //void SetScale(vec3 s){scale=s;};
+    void Rotate(vec3 r);
+    void Scale(vec3 s);
+    void Translate(vec3 t);
+
+    void AddChild(Transform* child);
+    void RemoveChild(Transform* child);
+    int GetChildrenCount() { return children.size(); }
 
     bool IsEqualTo(Transform t)
     {
@@ -29,9 +41,5 @@ public:
 
     Transform(glm::vec3 pos = glm::vec3(0.0f,0.0f,0.0f), glm::vec3 rot = glm::vec3(0.0f,0.0f,0.0f), glm::vec3 scale = glm::vec3(1.0f,1.0f,1.0f));
 
-    
-    vec3 Rotate(vec3 r);
-    vec3 Scale(vec3 s);
-    vec3 Translate(vec3 t);
-
+    void RecalculateMatrix(mat4 root = mat4(1.0f));
 };

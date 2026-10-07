@@ -46,16 +46,6 @@ Transform globalOffset = Transform();
 std::vector<Scene> scenes = std::vector<Scene>();
 int sceneIndex = 0;
 
-static void drawCallback()
-{
-	{
-		app.rootScene = &scenes[sceneIndex];
-
-	
-		globalOffset.Rotate(vec3(0.01f, 0,0));
-	};
-}
-
 static void keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if(action != GLFW_PRESS)
@@ -75,11 +65,19 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			break;
 
 		case 'W':
-			globalOffset.Scale(vec3(1.1,1,1));
+			globalOffset.Scale(vec3(0.1));
 			break;
 		case 'S':
-			globalOffset.Scale(vec3(1/1.1,1,1));
+			globalOffset.Scale(vec3(-0.1));
 			break;
+
+		case 'Q':
+			globalOffset.Rotate(vec3(0,20,0));
+			break;
+		case 'E':
+			globalOffset.Rotate(vec3(0,-20,0));
+			break;
+
 
 		case '1':
 			sceneIndex--;
@@ -137,12 +135,14 @@ int main(void)
 	scenes[0].AddObject(new DrawableObject(&model_sphere, &spYellow, Transform(vec3(0,0.8,1), vec3(0), vec3(0.1)))); 
 
 	app.rootScene = &(scenes[0]);
-	scenes[1].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(0), vec3(0), vec3(0.1))));
+	scenes[1].AddObject(new DrawableObject(&model_tree, &sp, Transform(vec3(0,0,0), vec3(0), vec3(0.1))));
 	//scenes[2].AddObject(&obj_tree);
 	//scenes[3].AddObject(&obj_login);
 
 
-	app.callback_preDraw = drawCallback;
+	app.callback_preDraw =  [](){
+		app.rootScene = &scenes[sceneIndex];
+	};
 
 	app.RunLoop();
 

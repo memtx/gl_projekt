@@ -7,6 +7,8 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
     shaderProgram = sp;
     transform = new Transform(t.GetPos(), t.GetRot(), t.GetScale());
 
+    children = std::vector<DrawableObject*>();
+
     nonHeapTransformShouldDelete = true;
 }
 
@@ -23,9 +25,28 @@ DrawableObject::~DrawableObject()
         delete this->transform;
 }
 
+void DrawableObject::AddChild(DrawableObject *child)
+{
+    this->transform->AddChild(child->transform);
+    children.push_back(child);
+}
+
+void DrawableObject::RemoveChild(DrawableObject *child)
+{
+    for(auto i=children.begin(); i != children.end(); i++)
+    {
+        if(*i == child)
+        {
+            this->transform->RemoveChild(child->transform);
+            children.erase(i);
+            return;
+        }
+    }
+    Log.Error("DrawableObject child to be removed not found!");
+}
+
 void DrawableObject::Draw()
 {
-
     if(activeShaderProgram != shaderProgram)
     {
         activeShaderProgram = shaderProgram;

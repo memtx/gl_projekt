@@ -42,13 +42,16 @@ bool ShaderProgram::HasTransform()
 void ShaderProgram::setTransform(Transform *t)
 {
     if(!HasTransform())
+    {
+        Log.Error("Transform not set!");
         return;
+    }
+    
+    if(t->GetChildrenCount() == 0)
+        t->RecalculateMatrix(); //děti se taky přepočítají
 
     //this->Use();
-    glad_glUniformMatrix4fv(trMatLoc, 1, GL_FALSE,  glm::value_ptr(t->mat));
-    //glUniform3fv(rotVecLoc, 1, &(t->rot[0]));
-    //glUniform3fv(scaleVecLoc, 1, &(t->scale[0]));
-    //glUniform3fv(posVecLoc, 1, &(t->pos[0]));
+    glad_glUniformMatrix4fv(trMatLoc, 1, GL_FALSE,  glm::value_ptr((t->resultMat)));
 
     //this->Disuse();
 }

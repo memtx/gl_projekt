@@ -2,7 +2,10 @@
 
 static class Log
 {
-    void Warn(char *msg);
-    void Error(char *msg);
+private:
+
+public:
+    void Warn(const char *msg);
+    void Error(const char *msg);
 
 } Log;

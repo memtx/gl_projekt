@@ -1,11 +1,11 @@
 #include "Log.h"
 
-void Log::Warn(char *msg)
+void Log::Warn(const char *msg)
 {
     printf(" (Warning) %s\n", msg);
 }
 
-void Log::Error(char *msg)
+void Log::Error(const char *msg)
 {
     printf("ERROR: %s\n", msg);
     exit(-1);

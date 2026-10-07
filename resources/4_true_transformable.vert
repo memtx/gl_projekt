@@ -9,8 +9,6 @@ out vec3 vertexColor;
 
 void main()
 {
-
-
     gl_Position = trMat * vec4(position, 1);
     vertexColor = color; //pass normals as color (may use abs() for color on all sides)
 }
