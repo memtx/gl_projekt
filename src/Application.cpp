@@ -6,7 +6,8 @@
 #include "models/tree.h"
 #include "models/OpenGL.h"
 #include "models/plain.h"
-#include "../vsbLogin.h"
+#include "models/vsbLogin.h"
+#include "../../earth.h"
 
 Application::~Application()
 {
@@ -80,12 +81,13 @@ void Application::Init(int width, int height, const char *windowName)
 
 void Application::LoadModels() 
 {
-	models[M_TRIANGLE] = new Model(triangle, sizeof(triangle));
-	models[M_TREE] = new Model(tree, sizeof(tree));	
-	models[M_LOGIN] = new Model(vsbLogin, sizeof(vsbLogin));
-	models[M_BUSHES] = new Model(bushes, sizeof(bushes));
-	models[M_PLAIN] = new Model(plain, sizeof(plain));
-	models[M_SPHERE] = new Model(sphere, sizeof(sphere));
+	models[MDL_TRIANGLE] = new Model(triangle, sizeof(triangle));
+	models[MDL_TREE] = new Model(tree, sizeof(tree));	
+	models[MDL_LOGIN] = new Model(vsbLogin, sizeof(vsbLogin));
+	models[MDL_BUSHES] = new Model(bushes, sizeof(bushes));
+	models[MDL_PLAIN] = new Model(plain, sizeof(plain));
+	models[MDL_SPHERE] = new Model(sphere, sizeof(sphere));
+	models[MDL_EARTH] = new Model(earth, sizeof(earth), L_3COORD3NORMAL3VERTCOLOR);
 
 }
 
@@ -94,12 +96,14 @@ void Application::LoadShaders()
 	shaders[S_BASE_FRAG] =  new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	shaders[S_BASE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/4_true_transformable.vert");
 	shaders[S_YELLOW_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
+	shaders[S_COLOR_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/5_transformableColorable.vert");
 
 	shaderPrograms[SP_BASIC] = new ShaderProgram(2, shaders[S_BASE_FRAG], shaders[S_BASE_VERTEX]); 
 	shaderPrograms[SP_YELLOW] = new ShaderProgram(2, shaders[S_YELLOW_FRAG], shaders[S_BASE_VERTEX]);
-}
-
-void Application::LoadObjects()
+	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
+}  
+ 
+void Application::LoadObjects() 
 {
 	controlledTransform = new Transform(vec3(0), vec3(0), vec3(1));
 
@@ -107,20 +111,25 @@ void Application::LoadObjects()
 		scenes.push_back(new Scene());
 
 	controlledTransform->Scale(vec3(0.1, 0.1, 0.1));
-	scenes[0]->AddObject(new DrawableObject(models[M_LOGIN], shaderPrograms[SP_BASIC], controlledTransform));
-	
+	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], controlledTransform));
+	 
 	for(float i=-1; i<1; i+= 0.2)
-		scenes[0]->AddObject(new DrawableObject(models[M_TREE], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
 	for(float i=-1+0.1; i<1-0.2; i+= 0.2)
-		scenes[0]->AddObject(new DrawableObject(models[M_BUSHES], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
-
-
-	scenes[0]->AddObject(new DrawableObject(models[M_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1)))); 
-
+		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
-	scenes[1]->AddObject(new DrawableObject(models[M_TREE], shaderPrograms[SP_BASIC], Transform(vec3(0), vec3(0), vec3(0.1))));
 
-}
+	DrawableObject *planets = new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], controlledTransform, std::vector<DrawableObject*> {
+		new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], Transform(vec3(0.5, 0,0), vec3(0, 90,0), vec3(0.1)))
+	}); 
+	//planets->AddChild(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], Transform(vec3(0.5, 0,0), vec3(0, 90,0), vec3(0.1))));
+	scenes[1]->AddObject(planets);
+
+ 
+	scenes[2]->AddObject(new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], controlledTransform));
+    
+} 
 
 void Application::RunLoop()
 {

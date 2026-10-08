@@ -18,7 +18,7 @@
 ASSIMP_INCLUDE_DIR:PATH=/home/Manul/Desktop/ZPG/projektZPG/include
 
 //Path to a library.
-ASSIMP_LIB:FILEPATH=ASSIMP_LIB-NOTFOUND
+ASSIMP_LIB:FILEPATH=/home/Manul/Desktop/ZPG/projektZPG/lib/libassimp.so
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line

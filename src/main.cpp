@@ -29,7 +29,7 @@ static void cursor_callback(GLFWwindow *window, double x, double y){ printf("cur
 
 static void button_callback(GLFWwindow* window, int button, int action, int mode){
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
-} 
+}  
 
 static void keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -72,6 +72,11 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 		case '2':
 			app.rootScene = app.scenes[1];
 			printf("scene changed to second\n");
+			break;
+
+		case '3':
+			app.rootScene = app.scenes[2];
+			printf("scene changed to third\n");
 			break;
 	}
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);

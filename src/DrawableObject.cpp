@@ -1,22 +1,28 @@
 #include "DrawableObject.h"
 
 //not using pointers is fine, the transform gets deleted by the destructor (scene must be non-ptr though)
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
     transform = new Transform(t.GetPos(), t.GetRot(), t.GetScale());
 
     children = std::vector<DrawableObject*>();
+    for(DrawableObject *child :childrenVec)
+        AddChild(child);
 
     nonHeapTransformShouldDelete = true;
 }
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform* t)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform* t, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
     transform = t;
+
+    children = std::vector<DrawableObject*>();
+    for(DrawableObject *child :childrenVec)
+        AddChild(child);
 }
 
 DrawableObject::~DrawableObject()
@@ -45,7 +51,7 @@ void DrawableObject::RemoveChild(DrawableObject *child)
     Log.Error("DrawableObject child to be removed not found!");
 }
 
-void DrawableObject::Draw()
+void DrawableObject::Draw() //first draw parent, then children. I guess openGL handles the triangle draw order?
 {
     if(activeShaderProgram != shaderProgram)
     {
@@ -63,6 +69,9 @@ void DrawableObject::Draw()
     }
 
     glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
+    
+    for(DrawableObject *child : children)
+        child->Draw();
     //model->unbindVAO();
     //glUseProgram(0);
 }

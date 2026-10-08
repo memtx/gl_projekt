@@ -6,7 +6,8 @@
 
 enum ModelDataLayout
 {
-    L_3COORD3NORMAL
+    L_3COORD3NORMAL,
+    L_3COORD3NORMAL3VERTCOLOR
 };
 
 class Model
@@ -21,7 +22,7 @@ public:
     const ModelDataLayout modelLayout;
     const size_t dataSize;
 
-    Model(const float *data, int sizeOfData, GLenum gl_drawType = GL_TRIANGLES,  ModelDataLayout modelDataLayout = ModelDataLayout::L_3COORD3NORMAL);
+    Model(const float *data, int sizeOfData, ModelDataLayout modelDataLayout = ModelDataLayout::L_3COORD3NORMAL, GLenum gl_drawType = GL_TRIANGLES);
     void bindVAO();
     static void unbindVAO();
 };

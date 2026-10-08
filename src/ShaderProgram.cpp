@@ -48,8 +48,8 @@ void ShaderProgram::setTransform(Transform *t)
         return;
     }
     
-    if(t->GetChildrenCount() == 0)
-        t->RecalculateMatrix(); //děti se taky přepočítají
+    if(t->HasParent() == false)
+        t->RecalculateMatrix(); //děti se přepočítají několikrát, TODO!
 
     //this->Use();
     glad_glUniformMatrix4fv(trMatLoc, 1, GL_FALSE,  glm::value_ptr((t->resultMat)));

@@ -16,6 +16,7 @@ private:
     vec3 scale; //only for tracking the current value
 
     std::vector<Transform*> children;
+    Transform* parent = nullptr;
     mat4 mat; //holding current object's transforms
 public:
     mat4 resultMat; //holding the transforms after processing with root
@@ -33,6 +34,7 @@ public:
     void AddChild(Transform* child);
     void RemoveChild(Transform* child);
     int GetChildrenCount() { return children.size(); }
+    bool HasParent() { return parent != nullptr; }
 
     bool IsEqualTo(Transform t)
     {

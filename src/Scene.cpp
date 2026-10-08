@@ -33,7 +33,7 @@ void Scene::RemoveObject(DrawableObject *obj)
 }
 
 void Scene::DrawAll()
-{
+{ 
     for(DrawableObject *obj: objects)
     { obj->Draw(); }
-}
+} 

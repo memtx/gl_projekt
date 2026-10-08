@@ -21,8 +21,8 @@ public:
     Model *model;
     Transform *transform;
     
-    DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform *transform = nullptr);
-    DrawableObject(Model *model = nullptr, ShaderProgram *shaderProgram = nullptr, Transform transform = Transform());
+    DrawableObject(Model *model, ShaderProgram *shaderProgram, Transform *transform = nullptr, std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
+    DrawableObject(Model *model, ShaderProgram *shaderProgram, Transform transform = Transform(), std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
     void AddChild(DrawableObject *child);
     void RemoveChild(DrawableObject *child);
     int GetChildrenCount() { return children.size(); };

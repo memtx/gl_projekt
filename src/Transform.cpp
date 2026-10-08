@@ -27,6 +27,7 @@ Transform::Transform(vec3 t, vec3 r, vec3 s)
 void Transform::AddChild(Transform *child)
 {
     children.push_back(child);
+    child->parent = this;
 }
 
 void Transform::RemoveChild(Transform *child)
@@ -36,6 +37,7 @@ void Transform::RemoveChild(Transform *child)
         if(*i == child)
         {
             children.erase(i);
+            child->parent = nullptr;
             return;
         }
     }

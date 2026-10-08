@@ -37,34 +37,37 @@ class Model;
 
 enum AppModels
 {
-	M_TRIANGLE = 0,
-    M_TREE = 1,
-	M_LOGIN = 2,
-	M_BUSHES = 3,
-	M_PLAIN = 4,
-	M_SPHERE = 5,
-    M_COUNT = 6
+	MDL_TRIANGLE = 0,
+    MDL_TREE = 1,
+	MDL_LOGIN = 2,
+	MDL_BUSHES = 3,
+	MDL_PLAIN = 4,
+	MDL_SPHERE = 5,
+    MDL_EARTH = 6,
+    MDL_COUNT = 7
 };
 
 enum AppShaders
 {
     S_BASE_FRAG = 0,
     S_BASE_VERTEX = 1,
-    S_YELLOW_FRAG = 2,
-    S_COUNT = 3
+    S_YELLOW_FRAG = 2, 
+    S_COLOR_VERTEX = 3,
+    S_COUNT = 4 
 };
-
+ 
 enum AppShaderPrograms
 {
     SP_BASIC = 0,
     SP_YELLOW = 1,
-    SP_COUNT = 2
+    SP_VERTCOLOR = 2,
+    SP_COUNT = 3
 };
 
 static class Application
 {
 private:
-    std::vector<Model*> models = std::vector<Model*>(M_COUNT);
+    std::vector<Model*> models = std::vector<Model*>(MDL_COUNT);
     std::vector<Shader*> shaders = std::vector<Shader*>(S_COUNT);
     std::vector<ShaderProgram*> shaderPrograms = std::vector<ShaderProgram*>(SP_COUNT);
     
