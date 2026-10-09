@@ -7,7 +7,9 @@
 #include "models/OpenGL.h"
 #include "models/plain.h"
 #include "models/vsbLogin.h"
-#include "../../earth.h"
+#include "models/earth.h"
+#include "models/sun.h"
+#include "../../moon.h"
 
 Application::~Application()
 {
@@ -88,6 +90,8 @@ void Application::LoadModels()
 	models[MDL_PLAIN] = new Model(plain, sizeof(plain));
 	models[MDL_SPHERE] = new Model(sphere, sizeof(sphere));
 	models[MDL_EARTH] = new Model(earth, sizeof(earth), L_3COORD3NORMAL3VERTCOLOR);
+	models[MDL_SUN] = new Model(sun, sizeof(sun), L_3COORD3NORMAL3VERTCOLOR);
+	models[MDL_MOON] = new Model(moon, sizeof(moon), L_3COORD3NORMAL3VERTCOLOR);
 
 }
 
@@ -103,7 +107,7 @@ void Application::LoadShaders()
 	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
 }  
  
-void Application::LoadObjects() 
+void Application::LoadObjects()  
 {
 	controlledTransform = new Transform(vec3(0), vec3(0), vec3(1));
 
@@ -120,20 +124,21 @@ void Application::LoadObjects()
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
 
-	DrawableObject *planets = new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], controlledTransform, std::vector<DrawableObject*> {
-		new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], Transform(vec3(0.5, 0,0), vec3(0, 90,0), vec3(0.1)))
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], controlledTransform, std::vector<DrawableObject*> {
+		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], Transform(vec3(5, 0,0), vec3(0, 90,0), vec3(0.5)), std::vector<DrawableObject*> {
+			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], Transform(vec3(3, 0,0), vec3(0, 90,0), vec3(0.5)))
+		})
 	}); 
-	//planets->AddChild(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], Transform(vec3(0.5, 0,0), vec3(0, 90,0), vec3(0.1))));
 	scenes[1]->AddObject(planets);
 
- 
-	scenes[2]->AddObject(new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], controlledTransform));
-    
-} 
+  
+	scenes[2]->AddObject(new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], controlledTransform));
+     
+}  
 
 void Application::RunLoop()
-{
-	deltaTime = glfwGetTime();
+{ 
+	deltaTime = glfwGetTime(); 
 	int frameCount = 0;
 
 	while (!glfwWindowShouldClose(this->window)) 

@@ -13,20 +13,6 @@
 
 typedef glm::vec3 vec3;
 
-
-static void error_callback(int error, const char* description){ fputs(description, stderr); }
-
-static void window_focus_callback(GLFWwindow* window, int focused){ printf("window_focus_callback \n"); }
-
-static void window_iconify_callback(GLFWwindow* window, int iconified){ printf("window_iconify_callback \n"); }
-
-static void window_size_callback(GLFWwindow* window, int width, int height){
-	printf("resize %d, %d \n", width, height);
-	glViewport(0, 0, width, height);
-}
-
-static void cursor_callback(GLFWwindow *window, double x, double y){ printf("cursor_callback \n"); }
-
 static void button_callback(GLFWwindow* window, int button, int action, int mode){
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 }  
@@ -86,22 +72,13 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 int main(void)
 {
 	app.callback_keyPress = keypress_callback;	
-	
-	//glfwSetCursorPosCallback(window, cursor_callback);
 	glfwSetMouseButtonCallback(app.window, button_callback);
-	//glfwSetWindowFocusCallback(app->window, window_focus_callback);
-	//glfwSetWindowIconifyCallback(app->window, window_iconify_callback);
-	glfwSetWindowSizeCallback(app.window, window_size_callback);
 
 	app.Init(800, 600, "ZPG Projekt");
 
 	app.LoadModels();
 	app.LoadShaders();
 	app.LoadObjects();
-
-	app.callback_preDraw = [](){
-		//app.rootScene = app.scenes[];
-	};
 
 	app.RunLoop();
 

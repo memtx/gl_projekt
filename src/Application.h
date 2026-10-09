@@ -44,7 +44,9 @@ enum AppModels
 	MDL_PLAIN = 4,
 	MDL_SPHERE = 5,
     MDL_EARTH = 6,
-    MDL_COUNT = 7
+    MDL_SUN = 7,
+    MDL_MOON = 8,
+    MDL_COUNT = 9
 };
 
 enum AppShaders
