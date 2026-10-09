@@ -48,7 +48,7 @@ void ShaderProgram::setTransform(Transform *t)
         return;
     }
     
-    if(t->HasParent() == false)
+    if(t->GetParent() == nullptr)
         t->RecalculateMatrix(); //děti se přepočítají několikrát, TODO!
 
     //this->Use();

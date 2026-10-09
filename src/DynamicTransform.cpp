@@ -8,11 +8,11 @@ void DynamicTransform::UpdateDynamicTransforms(float deltaTime)
         {
             case DT_LINEAR_ROTATE:
             {
-                t->Rotate(t->trIncrement*deltaTime);
+                t->Rotate(t->trIncrement);
                 t->trCurrentCount++;
                 if(t->trCurrentCount > t->trCountToLoop)
                 { 
-                    t->ResetTransforms(*t->trStart);
+                    t->ResetTransforms(*t);
                     t->trCurrentCount = 0;
                 }
                 break;
@@ -29,12 +29,18 @@ DynamicTransform::DynamicTransform(DynTransformType DT_TYPE, Transform beginTran
     
     this->trType = DT_TYPE;
     this->trStart = new Transform(beginTransform);
+    this->ResetTransforms(*trStart);
     this->trIncrement = increment;
 
     this->trCountToLoop = incrementCount;
     this->trCurrentCount = 0;
 
     transforms.push_back(this);
+}
+
+void DynamicTransform::PostCopyInit()
+{
+    DynamicTransform::transforms.push_back(this);
 }
 
 DynamicTransform::~DynamicTransform()
@@ -51,3 +57,4 @@ DynamicTransform::~DynamicTransform()
     }
     Log.FatalError("Couldn't remove DynamicTransform from list!");
 }
+

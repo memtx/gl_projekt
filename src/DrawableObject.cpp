@@ -5,8 +5,9 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform t, 
     model = m;
     shaderProgram = sp;
     
-    t.RecalculateMatrix();
+    //t.RecalculateMatrix();
     transform = new DynamicTransform(t);
+    ((DynamicTransform*)transform)->PostCopyInit();
 
     children = std::vector<DrawableObject*>();
     for(DrawableObject *child :childrenVec)

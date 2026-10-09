@@ -21,6 +21,7 @@ public:
     int trCountToLoop;
 
     DynamicTransform(DynTransformType DT_TYPE, Transform trStart, vec3 trIncrement, int trCountToLoop);
+    void PostCopyInit(); //copy constructor doesn't work for my use case
     ~DynamicTransform();
     static void UpdateDynamicTransforms(float deltaTime);
     

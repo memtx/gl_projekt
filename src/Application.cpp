@@ -125,9 +125,9 @@ void Application::LoadObjects()
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
 
-	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], controlledTransform, std::vector<DrawableObject*> {
-		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], Transform(vec3(5, 0,0), vec3(0, 90,0), vec3(0.5)), std::vector<DrawableObject*> {
-			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], Transform(vec3(3, 0,0), vec3(0, 90,0), vec3(0.5)))
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> {
+		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> {
+			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.01,0), 36000))
 		})
 	}); 
 	scenes[1]->AddObject(planets);
@@ -135,7 +135,7 @@ void Application::LoadObjects()
 	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
 	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
     
-	scenes[3]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360)));
+	scenes[3]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)));
 
 }  
 

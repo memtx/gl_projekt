@@ -36,7 +36,7 @@ public:
     void AddChild(Transform* child);
     void RemoveChild(Transform* child);
     int GetChildrenCount() { return children.size(); }
-    bool HasParent() { return parent != nullptr; }
+    Transform* GetParent() { return parent; }
 
     bool IsEqualTo(Transform t)
     {
