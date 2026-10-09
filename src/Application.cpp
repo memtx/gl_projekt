@@ -74,9 +74,10 @@ void Application::Init(int width, int height, const char *windowName)
 
 	//==== APP INIT ====
 
+	srand(time(NULL));
 	deltaTime = glfwGetTime();
     rootScene = nullptr;
-    glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
+	glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
 	
 }
 
@@ -110,17 +111,17 @@ void Application::LoadShaders()
 void Application::LoadObjects()  
 {
 	controlledTransform = new Transform(vec3(0), vec3(0), vec3(1));
+	controlledTransform->Scale(vec3(0.1, 0.1, 0.1)).Rotate(vec3(-45,0,0));
 
 	for(int i=0; i<4; i++) 
 		scenes.push_back(new Scene());
 
-	controlledTransform->Scale(vec3(0.1, 0.1, 0.1));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], controlledTransform));
 	 
-	for(float i=-1; i<1; i+= 0.2)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
-	for(float i=-1+0.1; i<1-0.2; i+= 0.2)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_BASIC], Transform(vec3(i,0,0.5), vec3(0), vec3(0.1))));
+	for(float i=0; i<10; i++)
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360,0), vec3(0.1))));
+	for(float i=0; i<10; i++)
+		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_BASIC], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360, 0), vec3(0.1))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
 
@@ -131,21 +132,24 @@ void Application::LoadObjects()
 	}); 
 	scenes[1]->AddObject(planets);
 
-  
-	scenes[2]->AddObject(new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], controlledTransform));
-     
+	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
+	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
+    
+	scenes[3]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360)));
+
 }  
 
 void Application::RunLoop()
 { 
-	deltaTime = glfwGetTime(); 
+	deltaTime = glfwGetTime(); //todo: fix deltatime 
 	int frameCount = 0;
 
 	while (!glfwWindowShouldClose(this->window)) 
 	{
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+		DynamicTransform::UpdateDynamicTransforms(deltaTime);
+
         if(callback_preDraw)
             callback_preDraw();
 
@@ -169,7 +173,6 @@ void Application::RunLoop()
             frameCount = 0;
             deltaTime = now;
         }
-
 	}
 		 
 	glfwDestroyWindow(this->window);

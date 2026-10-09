@@ -8,6 +8,6 @@ private:
 
 public:
     void Warn(const char *msg, char *extra = nullptr);
-    void Error(const char *msg, char *extra = nullptr);
+    void FatalError(const char *msg, char *extra = nullptr);
 
 } Log;

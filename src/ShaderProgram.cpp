@@ -44,7 +44,7 @@ void ShaderProgram::setTransform(Transform *t)
 {
     if(!HasTransform())
     {
-        Log.Error("Transform not set!");
+        Log.FatalError("Transform not set!");
         return;
     }
     

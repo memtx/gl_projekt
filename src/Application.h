@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <random>
+#include <time.h>
 
 //include glad
 //#include <glad/include/glad/glad.h>
@@ -24,6 +26,7 @@
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
+#include "DynamicTransform.h"
 #include "Model.h"
 #include "DrawableObject.h"
 #include "Scene.h"
@@ -33,6 +36,7 @@ class Scene;
 class Shader;
 class ShaderProgram;
 class Transform;
+class DynamicTransform;
 class Model;
 
 enum AppModels

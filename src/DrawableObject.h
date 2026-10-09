@@ -20,9 +20,12 @@ public:
     ShaderProgram *shaderProgram;  
     Model *model;
     Transform *transform;
-    
+
+    DrawableObject(Model *model, ShaderProgram *shaderProgram, DynamicTransform dynTransform, std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
+    DrawableObject(Model *model, ShaderProgram *shaderProgram, DynamicTransform* dynTransform, std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
     DrawableObject(Model *model, ShaderProgram *shaderProgram, Transform *transform = nullptr, std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
     DrawableObject(Model *model, ShaderProgram *shaderProgram, Transform transform = Transform(), std::vector<DrawableObject*> children = std::vector<DrawableObject*>());
+
     void AddChild(DrawableObject *child);
     void RemoveChild(DrawableObject *child);
     int GetChildrenCount() { return children.size(); };

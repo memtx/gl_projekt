@@ -64,6 +64,11 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			app.rootScene = app.scenes[2];
 			printf("scene changed to third\n");
 			break;
+
+		case '4':
+			app.rootScene = app.scenes[3];
+			printf("scene changed to fourth\n");
+			break;
 	}
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 }

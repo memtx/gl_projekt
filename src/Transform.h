@@ -27,9 +27,11 @@ public:
     //void SetPos(vec3 p) { pos=p; }; //currently don't know how, and don't have enough time to dilly-dally with QOL features
     //void SetRot(vec3 r) { rot=r; };
     //void SetScale(vec3 s){scale=s;};
-    void Rotate(vec3 r);
-    void Scale(vec3 s);
-    void Translate(vec3 t);
+    void ResetTransforms(vec3 pos = vec3(0.0f,0.0f,0.0f), vec3 rot = vec3(0.0f,0.0f,0.0f), vec3 scale = vec3(1.0f,1.0f,1.0f), mat4 mat = mat4(1));
+    void ResetTransforms(Transform t);
+    Transform& Rotate(vec3 r);
+    Transform& Scale(vec3 s);
+    Transform& Translate(vec3 t);
 
     void AddChild(Transform* child);
     void RemoveChild(Transform* child);
@@ -41,7 +43,7 @@ public:
         return this->pos == t.pos && this->rot == t.rot && this->scale == t.scale;
     }
 
-    Transform(glm::vec3 pos = glm::vec3(0.0f,0.0f,0.0f), glm::vec3 rot = glm::vec3(0.0f,0.0f,0.0f), glm::vec3 scale = glm::vec3(1.0f,1.0f,1.0f));
+    Transform(glm::vec3 pos = vec3(0.0f,0.0f,0.0f), vec3 rot = vec3(0.0f,0.0f,0.0f), vec3 scale = vec3(1.0f,1.0f,1.0f), mat4 mat = mat4(1));
 
     void RecalculateMatrix(mat4 root = mat4(1.0f));
 };

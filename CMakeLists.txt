@@ -98,6 +98,7 @@ add_executable(zpgproj
     src/Transform.cpp
     src/Scene.cpp
     src/Log.cpp
+    src/DynamicTransform.cpp
 )
 
 

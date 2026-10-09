@@ -9,7 +9,7 @@ void Log::Warn(const char *msg, char *extra)
 
 }
 
-void Log::Error(const char *msg, char *extra)
+void Log::FatalError(const char *msg, char *extra)
 {
     if(extra == nullptr)
         printf("ERROR: %s (%s)\n", msg, "");

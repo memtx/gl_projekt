@@ -37,7 +37,7 @@ Shader::Shader(GLenum GL_TYPEOF_SHADER, const char* shaderFile)
     {
         char infoLog[1024];
         glGetShaderInfoLog(id, sizeof(infoLog), nullptr, infoLog);
-        Log.Error("Shader failed",infoLog);
+        Log.FatalError("Shader failed",infoLog);
         glDeleteShader(id);
         exit(1);
     }
