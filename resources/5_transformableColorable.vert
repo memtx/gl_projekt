@@ -1,6 +1,6 @@
 #version 330 core
 
-uniform mat4 trMat = mat4(1.0f);
+uniform mat4 modelMatrix = mat4(1.0f);
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -10,6 +10,6 @@ out vec3 vertexColor;
  
 void main()
 {
-    gl_Position = trMat * vec4(position, 1);
+    gl_Position = modelMatrix * vec4(position, 1);
     vertexColor = vec3(0.001)*normal+color; //pass normals as color (may use abs() for color on all sides)
 }

@@ -89,16 +89,18 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
         activeShaderProgram->Use();  
     }
 
-    shaderProgram->setTransform(transform);
+    
+    shaderProgram->SetMatrices(transform);
 
 
-    if(activeModel != model)
+    if(activeModel != model && model)
     {
         activeModel = model;
         activeModel->bindVAO();
     }
 
-    glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
+    if(model)
+        glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
     
     for(DrawableObject *child : children)
         child->Draw();

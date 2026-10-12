@@ -9,7 +9,7 @@
 #include "models/vsbLogin.h"
 #include "models/earth.h"
 #include "models/sun.h"
-#include "../../moon.h"
+#include "models/moon.h"
 
 Application::~Application()
 {
@@ -78,7 +78,8 @@ void Application::Init(int width, int height, const char *windowName)
 	deltaTime = glfwGetTime();
     rootScene = nullptr;
 	glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
-	
+
+	this->cam = new Camera();
 }
 
 
@@ -103,9 +104,9 @@ void Application::LoadShaders()
 	shaders[S_YELLOW_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
 	shaders[S_COLOR_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/5_transformableColorable.vert");
 
-	shaderPrograms[SP_BASIC] = new ShaderProgram(2, shaders[S_BASE_FRAG], shaders[S_BASE_VERTEX]); 
-	shaderPrograms[SP_YELLOW] = new ShaderProgram(2, shaders[S_YELLOW_FRAG], shaders[S_BASE_VERTEX]);
-	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
+	shaderPrograms[SP_BASIC] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_BASE_VERTEX]); 
+	shaderPrograms[SP_YELLOW] = new ShaderProgram(cam,2, shaders[S_YELLOW_FRAG], shaders[S_BASE_VERTEX]);
+	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
 }  
  
 void Application::LoadObjects()  
@@ -125,17 +126,26 @@ void Application::LoadObjects()
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
 
-	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> {
-		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> {
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> 
+	{
+		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> 
+		{
 			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.01,0), 36000))
+		}),
+		new DrawableObject(nullptr,shaderPrograms[SP_BASIC],DynamicTransform(DT_LINEAR_ROTATE,Transform(),vec3(0.2,0,0),360*10), std::vector<DrawableObject*>
+		{
+			new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,3,0)),vec3(0,0.5,0.5),360*2))
 		})
-	}); 
+		
+	});
+	
+	
 	scenes[1]->AddObject(planets);
 
 	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
 	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
     
-	scenes[3]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)));
+	scenes[3]->AddObject(new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], controlledTransform )); //new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)
 
 }  
 

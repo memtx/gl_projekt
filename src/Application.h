@@ -23,6 +23,7 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
+#include "Event.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
@@ -38,6 +39,7 @@ class ShaderProgram;
 class Transform;
 class DynamicTransform;
 class Model;
+class Camera;
 
 enum AppModels
 {
@@ -83,6 +85,7 @@ public:
     Scene *rootScene;
     std::vector<Scene*> scenes = std::vector<Scene*>(); 
     Transform *controlledTransform;
+    Camera *cam;
 
     double deltaTime;
 

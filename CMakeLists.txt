@@ -88,17 +88,19 @@ endif()
 
 add_executable(zpgproj    
     src/main.cpp
+    src/Camera.cpp
+    src/Shader.cpp
+    src/ShaderProgram.cpp
     #include/glutils.cpp
     #include/glutils.h
     src/Application.cpp
     src/DrawableObject.cpp
     src/Model.cpp
-    src/Shader.cpp
-    src/ShaderProgram.cpp
     src/Transform.cpp
     src/Scene.cpp
     src/Log.cpp
     src/DynamicTransform.cpp
+
 )
 
 

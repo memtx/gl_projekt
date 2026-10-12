@@ -7,7 +7,7 @@
  * @details  format: ( coordX, coordY, coordZ, normalX, normalY, normalZ, vertCol_R, vertCol_G, vertCol_B )
  * version: 1.0
  * 
- * @author Manulynx (script)
+ * @author Manulynx
  *
  * @year 2026
  **/

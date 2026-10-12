@@ -16,9 +16,23 @@ void ShaderProgram::SetFloat(GLint location, float value)
 	//glUseProgram(0);
 }
 
-ShaderProgram::ShaderProgram(int shaderCount, ...) 
+
+void ShaderProgram::OnUpdateView(mat4 view)
+{
+    Log.Warn("onUpdateView");
+}
+
+void ShaderProgram::OnUpdateProjection(mat4 proj)
+{
+    Log.Warn("onUpdateProjection");
+}
+
+ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...) 
  : id(glCreateProgram())
 {
+    this->camera = nullptr;
+    UseCamera(cam);
+
     va_list args;
     va_start(args, shaderCount);
     for(int i=0; i<shaderCount; i++)
@@ -28,7 +42,9 @@ ShaderProgram::ShaderProgram(int shaderCount, ...)
     va_end(args);
     glLinkProgram(id);
     
-    trMatLoc = GetVarLocation("trMat");
+    modelMatLoc = GetVarLocation("modelMatrix");
+    viewMatLoc = GetVarLocation("viewMatrix");
+    projMatLoc = GetVarLocation("projectionMatrix");
 }
 
 void ShaderProgram::Use()
@@ -38,9 +54,38 @@ void ShaderProgram::Disuse()
 { glUseProgram(0); }
 
 bool ShaderProgram::HasTransform()
-{ return this->trMatLoc != -1; }
+{ return this->modelMatLoc != -1; }
 
-void ShaderProgram::setTransform(Transform *t)
+void ShaderProgram::UseCamera(Camera *c)
+{
+    if(this->camera == nullptr)
+    {
+
+        Event<int> test = Event<int>();
+        //test.Subscribe(std::bind(&ShaderProgram::OnUpdateView,this, _1));
+        
+        c->projectionUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
+        c->projectionUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateProjection, this, _1));
+        //c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
+
+        this->camera = c;
+    }
+    else
+    {
+
+        /*
+        this->camera->projectionUpdate->Unsubscribe(this->OnUpdateProjection);
+        this->camera->viewUpdate->Unsubscribe(this->OnUpdateView);
+
+        c->projectionUpdate->Subscribe(this->OnUpdateProjection);
+        c->viewUpdate->Subscribe(this->OnUpdateView);
+        */
+        this->camera = c;
+    }
+}
+
+
+void ShaderProgram::SetMatrices(Transform *t)
 {
     if(!HasTransform())
     {
@@ -52,7 +97,8 @@ void ShaderProgram::setTransform(Transform *t)
         t->RecalculateMatrix(); //děti se přepočítají několikrát, TODO!
 
     //this->Use();
-    glad_glUniformMatrix4fv(trMatLoc, 1, GL_FALSE,  glm::value_ptr((t->resultMat)));
+    mat4 test = t->resultMat;
+    glad_glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,  glm::value_ptr((test)));
 
     //this->Disuse();
 }
