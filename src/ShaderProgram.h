@@ -20,17 +20,18 @@ class Event;
 class ShaderProgram
 {
 private:
-    std::vector<Shader*> shaders = std::vector<Shader*>();
+    std::vector<Shader*> shaders = std::vector<Shader*>(); //todo
     GLint GetVarLocation(const char* name);
     void SetFloat(GLint location, float value);
     void OnUpdateProjection(mat4 proj);
     void OnUpdateView(mat4 viewMat);
-    
+
     static void testFunc(mat4 t) {Log.Warn("Test");}
 
     GLint modelMatLoc;
     GLint viewMatLoc;
     GLint projMatLoc;
+    GLint unixSecsLoc;
 
     Camera *camera;
     mat4 cameraView;

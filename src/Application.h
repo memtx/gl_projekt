@@ -52,7 +52,8 @@ enum AppModels
     MDL_EARTH = 6,
     MDL_SUN = 7,
     MDL_MOON = 8,
-    MDL_COUNT = 9
+    MDL_CLOCK = 9,
+    MDL_COUNT = 10
 };
 
 enum AppShaders
@@ -61,15 +62,20 @@ enum AppShaders
     S_BASE_VERTEX = 1,
     S_YELLOW_FRAG = 2, 
     S_COLOR_VERTEX = 3,
-    S_COUNT = 4 
+    S_MATS_VERTEX = 4,
+    S_CLOCK_VERTEX = 5,
+    S_CLOCK_FRAG = 6,
+    S_COUNT = 7
 };
  
 enum AppShaderPrograms
 {
-    SP_BASIC = 0,
+    SP_BASIC = 0, 
     SP_YELLOW = 1,
     SP_VERTCOLOR = 2,
-    SP_COUNT = 3
+    SP_FULLMATS = 3,
+    SP_CLOCK = 4,
+    SP_COUNT = 5
 };
 
 static class Application

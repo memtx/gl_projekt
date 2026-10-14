@@ -19,20 +19,22 @@ void ShaderProgram::SetFloat(GLint location, float value)
 
 void ShaderProgram::OnUpdateView(mat4 view)
 {
-    Log.Warn("onUpdateView");
+    cameraView = view;
+    //glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
+    Log.Warn("view");
+
 }
 
 void ShaderProgram::OnUpdateProjection(mat4 proj)
 {
-    Log.Warn("onUpdateProjection");
+    cameraProj = proj;
+    
+    Log.Warn("proj");
 }
 
 ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...) 
  : id(glCreateProgram())
 {
-    this->camera = nullptr;
-    UseCamera(cam);
-
     va_list args;
     va_start(args, shaderCount);
     for(int i=0; i<shaderCount; i++)
@@ -44,7 +46,11 @@ ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...)
     
     modelMatLoc = GetVarLocation("modelMatrix");
     viewMatLoc = GetVarLocation("viewMatrix");
-    projMatLoc = GetVarLocation("projectionMatrix");
+    projMatLoc = GetVarLocation("projectionMatrix");    
+    unixSecsLoc = GetVarLocation("unixSecs");    
+
+    this->camera = nullptr;
+    UseCamera(cam);
 }
 
 void ShaderProgram::Use()
@@ -60,11 +66,7 @@ void ShaderProgram::UseCamera(Camera *c)
 {
     if(this->camera == nullptr)
     {
-
-        Event<int> test = Event<int>();
-        //test.Subscribe(std::bind(&ShaderProgram::OnUpdateView,this, _1));
-        
-        c->projectionUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
+        c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
         c->projectionUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateProjection, this, _1));
         //c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
 
@@ -72,16 +74,20 @@ void ShaderProgram::UseCamera(Camera *c)
     }
     else
     {
+        this->camera->viewUpdate->Unsubscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
+        this->camera->projectionUpdate->Unsubscribe(std::bind(&ShaderProgram::OnUpdateProjection, this, _1));
 
-        /*
-        this->camera->projectionUpdate->Unsubscribe(this->OnUpdateProjection);
-        this->camera->viewUpdate->Unsubscribe(this->OnUpdateView);
-
-        c->projectionUpdate->Subscribe(this->OnUpdateProjection);
-        c->viewUpdate->Subscribe(this->OnUpdateView);
-        */
+        c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
+        c->projectionUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateProjection, this, _1));
+        
         this->camera = c;
     }
+    this->cameraView = this->camera->getView();
+    this->cameraProj = this->camera->getProjection();
+    //OnUpdateProjection(this->camera->getProjection());
+    //OnUpdateView(this->camera->getView());
+    
+
 }
 
 
@@ -96,9 +102,24 @@ void ShaderProgram::SetMatrices(Transform *t)
     if(t->GetParent() == nullptr)
         t->RecalculateMatrix(); //děti se přepočítají několikrát, TODO!
 
+    if(this->viewMatLoc != -1)
+    {
+        glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
+    //glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
+    }
+
     //this->Use();
     mat4 test = t->resultMat;
     glad_glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,  glm::value_ptr((test)));
+
+    if(this->unixSecsLoc != -1)
+    { 
+        static int t;
+        //t = 3600 + 60 + 1;
+        t = time(NULL) % (3600*24);  
+        glad_glUniform1i(unixSecsLoc, t);
+    }
+
 
     //this->Disuse();
 }

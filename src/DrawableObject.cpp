@@ -101,7 +101,8 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
 
     if(model)
         glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
-    
+        //případně někdy dát pro optimalizaci drawElements() //místo formátu 3 vertexů == trojúhelník, je rozdělený na indexy a vrcholy
+
     for(DrawableObject *child : children)
         child->Draw();
     //model->unbindVAO();

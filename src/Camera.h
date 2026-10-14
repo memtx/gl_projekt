@@ -21,10 +21,10 @@ public:
     Camera();
     ~Camera();
 
-    void TestCall(){
-        viewUpdate->Call(view);
-        projectionUpdate->Call(projection);
-    }
+    void Rotate(vec3 rot); ///currently also just debug func
+
+    mat4 getView() {return view;}
+    mat4 getProjection() {return projection;}
 
     Event<mat4> *viewUpdate;
     Event<mat4> *projectionUpdate; 

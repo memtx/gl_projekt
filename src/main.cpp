@@ -69,8 +69,12 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			app.rootScene = app.scenes[3];
 			printf("scene changed to fourth\n");
 			break;
+
+		case 'R':
+			app.cam->Rotate(vec3(0,0.1,0));
+			break;
 	}
-	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
+	printf("key_callback [%c (%d),%d,%d,%d] \n", key, key, scancode, action, mods);
 }
 
 

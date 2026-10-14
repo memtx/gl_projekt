@@ -12,7 +12,7 @@ template <typename T> //call data / callback input type
 class Event
 {
 private:
-    std::vector<void(*)(T)> subscribers;
+    std::vector<std::function<void(T)>> subscribers;
 
 public:
     Event();
@@ -27,19 +27,19 @@ public:
 template <typename T>
 Event<T>::Event()
 {
-    this->subscribers = std::vector<void(*)(T)>();
+    this->subscribers = std::vector<std::function<void(T)>>();
 }
 
 template <typename T>
 void Event<T>::Subscribe(std::function<void(T)> callbackFn)
 {
-    //this->subscribers.push_back(callbackFn.target);
+    this->subscribers.push_back(callbackFn);
 }
 
 template <typename T>
 void Event<T>::Unsubscribe(std::function<void(T)> callbackFn)
 {
-    /*
+    
     for(auto it = subscribers.begin(); it != subscribers.end(); it++)
     {
         if(*it = callbackFn)
@@ -49,7 +49,7 @@ void Event<T>::Unsubscribe(std::function<void(T)> callbackFn)
             return;
         }
     }
-    Log.FatalError("Event cannot unsubscribe (subscriber not found)");*/
+    Log.FatalError("Event cannot unsubscribe (subscriber not found)");
 }
 
 template<typename T>
