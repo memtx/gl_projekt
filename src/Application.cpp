@@ -105,8 +105,8 @@ void Application::LoadShaders()
 	shaders[S_BASE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/4_true_transformable.vert");
 	shaders[S_YELLOW_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
 	shaders[S_COLOR_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/5_transformableColorable.vert");
-	shaders[S_MATS_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfColorProject.vert");
-	shaders[S_CLOCK_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_clockColorMovementNOVIEW.vert");
+	shaders[S_MATS_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfColorCamera.vert");
+	shaders[S_CLOCK_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_clockColorCamera.vert");
 	shaders[S_CLOCK_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/6_clockRecolor.frag");
 
 	shaderPrograms[SP_BASIC] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_BASE_VERTEX]); 
@@ -144,9 +144,8 @@ void Application::LoadObjects()
 		{
 			new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,3,0)),vec3(0,0.5,0.5),360*2))
 		})
-	});
-	 
-	  
+	}); 
+
 	scenes[1]->AddObject(planets);
 
 	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));

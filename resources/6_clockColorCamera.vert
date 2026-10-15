@@ -69,8 +69,8 @@ void main()
     if(color == vec3(0,0,1))
         timedPos = rotationZ(hrs*DEG2RADIAN*360/12) * vec4(position,1);
     
-    gl_Position = /* projectionMatrix * viewMatrix * */ modelMatrix * timedPos;// vec4(position, 1);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * timedPos;// vec4(position, 1);
     
 
-    vertexColor = vec3(0.001)*normal+color; //pass normals as color (may use abs() for color on all sides)
+    vertexColor = color; //can also pass normals as color (may use abs() for color on all sides)
 } 
