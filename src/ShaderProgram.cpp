@@ -115,8 +115,9 @@ void ShaderProgram::SetMatrices(Transform *t)
     if(this->unixSecsLoc != -1)
     { 
         static int t;
-        //t = 3600 + 60 + 1;
-        t = time(NULL) % (3600*24);  
+        //t = 3600 + 60 + 1
+        t = time(NULL)
+         % (3600*24);  
         glad_glUniform1i(unixSecsLoc, t);
     }
 

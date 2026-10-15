@@ -114,8 +114,8 @@ void Application::LoadShaders()
 	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
 	shaderPrograms[SP_FULLMATS] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATS_VERTEX]);
 	shaderPrograms[SP_CLOCK] = new ShaderProgram(cam, 2, shaders[S_CLOCK_FRAG], shaders[S_CLOCK_VERTEX]);
-}
- 
+} 
+
 void Application::LoadObjects()  
 {
 	controlledTransform = new Transform(vec3(0), vec3(0), vec3(1));
@@ -143,8 +143,7 @@ void Application::LoadObjects()
 		new DrawableObject(nullptr,shaderPrograms[SP_BASIC],DynamicTransform(DT_LINEAR_ROTATE,Transform(),vec3(0.2,0,0),360*10), std::vector<DrawableObject*>
 		{
 			new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,3,0)),vec3(0,0.5,0.5),360*2))
-		})  
- 
+		})
 	});
 	 
 	  

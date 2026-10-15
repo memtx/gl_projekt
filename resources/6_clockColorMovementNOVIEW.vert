@@ -55,7 +55,7 @@ void main()
 {
     int secs = -unixSecs;
     int mins = -(unixSecs / 60);
-    int hrs = -(unixSecs / 3600);
+    int hrs = -(unixSecs / (3600));
 
     vec4 timedPos = vec4(1);
 
@@ -67,7 +67,7 @@ void main()
         timedPos = rotationZ(mins*DEG2RADIAN*360/60) * vec4(position, 1);
     
     if(color == vec3(0,0,1))
-        timedPos = rotationZ(hrs*DEG2RADIAN*360/24) * vec4(position,1);
+        timedPos = rotationZ(hrs*DEG2RADIAN*360/12) * vec4(position,1);
     
     gl_Position = /* projectionMatrix * viewMatrix * */ modelMatrix * timedPos;// vec4(position, 1);
     
