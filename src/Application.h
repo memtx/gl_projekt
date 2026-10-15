@@ -32,6 +32,7 @@
 #include "DrawableObject.h"
 #include "Scene.h"
 #include "Log.h"
+#include "Camera.h"
 
 class Scene;
 class Shader;
