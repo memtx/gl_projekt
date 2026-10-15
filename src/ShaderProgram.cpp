@@ -64,6 +64,7 @@ bool ShaderProgram::HasTransform()
 
 void ShaderProgram::UseCamera(Camera *c)
 {
+    Log.Warn("Camera used");
     if(this->camera == nullptr)
     {
         c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
@@ -100,13 +101,13 @@ void ShaderProgram::SetMatrices(Transform *t)
     }
     
     if(t->GetParent() == nullptr)
-        t->RecalculateMatrix(); //děti se přepočítají několikrát, TODO!
+        t->RecalculateMatrix();
 
     if(this->viewMatLoc != -1)
-    {
         glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
-    //glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
-    }
+
+    if(this->projMatLoc != -1)
+        glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
 
     //this->Use();
     mat4 test = t->resultMat;

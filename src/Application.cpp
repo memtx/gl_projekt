@@ -76,7 +76,6 @@ void Application::Init(int width, int height, const char *windowName)
 	//==== APP INIT ====
 
 	srand(time(NULL));
-	deltaTime = glfwGetTime();
     rootScene = nullptr;
 	glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
 
@@ -101,18 +100,14 @@ void Application::LoadModels()
 
 void Application::LoadShaders()
 {
-	shaders[S_BASE_FRAG] =  new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
-	shaders[S_BASE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/4_true_transformable.vert");
-	shaders[S_YELLOW_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/3_yellow.frag");
-	shaders[S_COLOR_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/5_transformableColorable.vert");
+	shaders[S_BASE_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/1_basic.frag");
 	shaders[S_MATS_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfColorCamera.vert");
+	shaders[S_MATSNORMAL_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfNormalCamera.vert");
 	shaders[S_CLOCK_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_clockColorCamera.vert");
 	shaders[S_CLOCK_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/6_clockRecolor.frag");
 
-	shaderPrograms[SP_BASIC] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_BASE_VERTEX]); 
-	shaderPrograms[SP_YELLOW] = new ShaderProgram(cam,2, shaders[S_YELLOW_FRAG], shaders[S_BASE_VERTEX]);
-	shaderPrograms[SP_VERTCOLOR] = new ShaderProgram(cam,2, shaders[S_BASE_FRAG], shaders[S_COLOR_VERTEX]);
 	shaderPrograms[SP_FULLMATS] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATS_VERTEX]);
+	shaderPrograms[SP_FULLMATSNORMAL] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATSNORMAL_VERTEX]);
 	shaderPrograms[SP_CLOCK] = new ShaderProgram(cam, 2, shaders[S_CLOCK_FRAG], shaders[S_CLOCK_VERTEX]);
 } 
 
@@ -125,31 +120,31 @@ void Application::LoadObjects()
 	for(int i=0; i<4; i++) 
 		scenes.push_back(new Scene());
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], controlledTransform));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
 	 
 	for(float i=0; i<10; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BASIC], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360,0), vec3(0.1))));
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360,0), vec3(0.1))));
 	for(float i=0; i<10; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_BASIC], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360, 0), vec3(0.1))));
-	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_YELLOW], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
+		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360, 0), vec3(0.1))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
  
-	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> 
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> 
 	{ 
-		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> 
+		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> 
 		{
-			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_VERTCOLOR], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.01,0), 36000))
+			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.01,0), 36000))
 		}),
-		new DrawableObject(nullptr,shaderPrograms[SP_BASIC],DynamicTransform(DT_LINEAR_ROTATE,Transform(),vec3(0.2,0,0),360*10), std::vector<DrawableObject*>
+		new DrawableObject(nullptr,shaderPrograms[SP_FULLMATS],DynamicTransform(DT_LINEAR_ROTATE,Transform(),vec3(0.2,0,0),360*10), std::vector<DrawableObject*>
 		{
-			new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BASIC], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,3,0)),vec3(0,0.5,0.5),360*2))
+			new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,3,0)),vec3(0,0.5,0.5),360*2))
 		})
 	}); 
 
 	scenes[1]->AddObject(planets);
 
-	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
-	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_BASIC], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
+	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
+	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
     
 	scenes[3]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], controlledTransform)); //new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)
  
@@ -157,11 +152,17 @@ void Application::LoadObjects()
 
 void Application::RunLoop()
 { 
-	deltaTime = glfwGetTime(); //todo: fix deltatime 
 	int frameCount = 0;
+	float lastFrame = glfwGetTime();
+	float fpsCounterTimer = 0;
 
 	while (!glfwWindowShouldClose(this->window)) 
 	{
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;  
+
+
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		DynamicTransform::UpdateDynamicTransforms(deltaTime);
@@ -182,12 +183,12 @@ void Application::RunLoop()
  
         // FPS counter
         frameCount++;
-        double now = glfwGetTime();
-        if (now - deltaTime >= 1.0)
+        
+        if ((fpsCounterTimer += deltaTime) >= 1 )
         {
+			fpsCounterTimer = 0;
             printf("FPS: %d\n", frameCount);
-            frameCount = 0; 
-            deltaTime = now;
+			frameCount = 0;
         }
 	}
 		 

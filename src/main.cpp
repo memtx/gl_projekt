@@ -29,7 +29,8 @@ static void keypress_callback(GLFWwindow* window, int key, int scancode, int act
 			break;
 
 		case 'A':
-			app.controlledTransform->Translate(vec3(-1,0,0));
+			//app.controlledTransform->Translate(vec3(-1,0,0));
+			
 			break;
 		case 'D': 
 			app.controlledTransform->Translate(vec3(1,0,0));

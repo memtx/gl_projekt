@@ -8,7 +8,7 @@ typedef glm::mat4 mat4;
 template <typename T>
 class Event;
 
-class Camera
+class Camera : public Transform
 {
 private:
     mat4 view;

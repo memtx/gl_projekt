@@ -3,7 +3,7 @@
 Camera::Camera()
 {
     //  (look vector, target, up)
-    vec3 cameraPos = vec3(0.5,0,0.5);
+    vec3 cameraPos = vec3(3,0,0);
     vec3 cameraTarget = vec3(0,0,0);
 
     vec3 cameraDir = glm::normalize(cameraPos - cameraTarget); //aims opposite to the target
@@ -32,11 +32,5 @@ void Camera::Rotate(vec3 rot)
     view = glm::rotate(view, rot.y, vec3(0,1,0));
     view = glm::rotate(view, rot.z, vec3(0,0,1));
 
-    if(false)
-    {
-
-    }
-
     viewUpdate->Call(view);
-    projectionUpdate->Call(projection);
 }
