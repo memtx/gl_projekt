@@ -122,16 +122,25 @@ void Application::LoadObjects()
   
 	for(int i=0; i<4; i++) 
 		scenes.push_back(new Scene());
+	this->rootScene = scenes[0];
 
+	
 	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
-	 
+	
+	/*
 	for(float i=0; i<70; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(1))));
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(1))));
 	for(float i=0; i<70; i++)
 		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0  ,rand()%200/10.0f-10), vec3(0,rand()%360, 0), vec3(1))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
-	this->rootScene = scenes[0];
- 
+
+	*/
+	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(10,0,0))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,10,0))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,0,10))));
+
+
 	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0), vec3(-45,0,0), vec3(0.1)), vec3(0,0.01,0), 36000), std::vector<DrawableObject*> 
 	{ 
 		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.02,0), 36000/2), std::vector<DrawableObject*> 
@@ -171,6 +180,8 @@ void Application::RunLoop()
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		DynamicTransform::UpdateDynamicTransforms(deltaTime);
+
+		DrawableObject::ClearActiveShader();
 
 		input.processKeyInputs();
 

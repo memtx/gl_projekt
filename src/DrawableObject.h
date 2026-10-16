@@ -30,6 +30,8 @@ public:
     void RemoveChild(DrawableObject *child);
     int GetChildrenCount() { return children.size(); };
 
+    static void ClearActiveShader();
+
     ~DrawableObject();
     void Draw();
 };

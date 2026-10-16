@@ -112,5 +112,10 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
     //glUseProgram(0);
 }
 
+void DrawableObject::ClearActiveShader()
+{
+    activeShaderProgram = nullptr;
+}
+
 ShaderProgram* DrawableObject::activeShaderProgram = nullptr;
 Model* DrawableObject::activeModel = nullptr; 
