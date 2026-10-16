@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdarg.h>
 
-static class Log
+extern class Log
 {
 private:
 
@@ -10,4 +10,12 @@ public:
     void Warn(const char *msg, char *extra = nullptr);
     void FatalError(const char *msg, char *extra = nullptr);
 
-} Log;
+    void ResetPerFrameCounters();
+    void PrintCounters();
+
+    int countVAOBinds;
+    int countUniforms;
+    int countDraws;
+
+
+} logger;

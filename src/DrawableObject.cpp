@@ -78,7 +78,7 @@ void DrawableObject::RemoveChild(DrawableObject *child)
             return;
         }
     }
-    Log.FatalError("DrawableObject child to be removed not found!");
+    logger.FatalError("DrawableObject child to be removed not found!");
 }
 
 void DrawableObject::Draw() //first draw parent, then children. I guess openGL handles the triangle draw order?
@@ -97,12 +97,15 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
     {
         activeModel = model;
         activeModel->bindVAO();
+        logger.countVAOBinds++;
     }
 
     if(model)
+    {
+        logger.countDraws++;
         glDrawArrays(activeModel->gl_drawType,0, activeModel->dataSize);
         //případně někdy dát pro optimalizaci drawElements() //místo formátu 3 vertexů == trojúhelník, je rozdělený na indexy a vrcholy
-
+    }
     for(DrawableObject *child : children)
         child->Draw();
     //model->unbindVAO();

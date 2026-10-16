@@ -6,7 +6,7 @@
 #include "Log.h"
 
 
-class Log;
+class logger;
 
 template <typename T> //call data / callback input type
 class Event
@@ -49,7 +49,7 @@ void Event<T>::Unsubscribe(std::function<void(T)> callbackFn)
             return;
         }
     }
-    Log.FatalError("Event cannot unsubscribe (subscriber not found)");
+    logger.FatalError("Event cannot unsubscribe (subscriber not found)");
 }
 
 template<typename T>

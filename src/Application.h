@@ -34,6 +34,8 @@
 #include "Log.h"
 #include "Camera.h"
 
+#include "Input.h"
+
 class Scene;
 class Shader;
 class ShaderProgram;
@@ -75,7 +77,7 @@ enum AppShaderPrograms
     SP_COUNT = 3
 };
 
-static class Application
+extern class Application
 {
 private:
     std::vector<Model*> models = std::vector<Model*>(MDL_COUNT);

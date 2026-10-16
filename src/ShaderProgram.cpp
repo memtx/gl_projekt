@@ -1,6 +1,5 @@
 #include "ShaderProgram.h"
 
-
 GLint ShaderProgram::GetVarLocation(const char* name)
 {
     glUseProgram(id);
@@ -20,16 +19,27 @@ void ShaderProgram::SetFloat(GLint location, float value)
 void ShaderProgram::OnUpdateView(mat4 view)
 {
     cameraView = view;
-    //glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
-    Log.Warn("view");
+    this->Use();
+    if(this->viewMatLoc != -1)
+    {
+        glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
+        logger.countUniforms++;
+    }
+    logger.Warn("view");
 
 }
 
 void ShaderProgram::OnUpdateProjection(mat4 proj)
 {
     cameraProj = proj;
-    
-    Log.Warn("proj");
+    this->Use();
+    if(this->projMatLoc != -1)
+    {
+
+        glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
+        logger.countUniforms++;
+    }
+    logger.Warn("proj");
 }
 
 ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...) 
@@ -64,7 +74,7 @@ bool ShaderProgram::HasTransform()
 
 void ShaderProgram::UseCamera(Camera *c)
 {
-    Log.Warn("Camera used");
+    logger.Warn("Camera used");
     if(this->camera == nullptr)
     {
         c->viewUpdate->Subscribe(std::bind(&ShaderProgram::OnUpdateView, this, _1));
@@ -83,10 +93,9 @@ void ShaderProgram::UseCamera(Camera *c)
         
         this->camera = c;
     }
-    this->cameraView = this->camera->getView();
-    this->cameraProj = this->camera->getProjection();
-    //OnUpdateProjection(this->camera->getProjection());
-    //OnUpdateView(this->camera->getView());
+
+    OnUpdateProjection(this->camera->getProjection());
+    OnUpdateView(this->camera->getView());
     
 
 }
@@ -96,30 +105,23 @@ void ShaderProgram::SetMatrices(Transform *t)
 {
     if(!HasTransform())
     {
-        Log.FatalError("Transform not set!");
+        logger.FatalError("Transform not set!");
         return;
     }
     
     if(t->GetParent() == nullptr)
         t->RecalculateMatrix();
 
-    if(this->viewMatLoc != -1)
-        glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
-
-    if(this->projMatLoc != -1)
-        glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
-
-    //this->Use();
     mat4 test = t->resultMat;
     glad_glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,  glm::value_ptr((test)));
+    logger.countUniforms++;
 
     if(this->unixSecsLoc != -1)
     { 
         static int t;
-        //t = 3600 + 60 + 1
-        t = time(NULL)
-         % (3600*24);  
+        t = time(NULL) % (3600*24);  
         glad_glUniform1i(unixSecsLoc, t);
+        logger.countUniforms++;
     }
 
 

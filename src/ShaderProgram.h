@@ -15,6 +15,7 @@ class Transform;
 class Camera;
 template <typename T>
 class Event;
+class logger;
 
         using namespace std::placeholders;
 class ShaderProgram
@@ -26,7 +27,7 @@ private:
     void OnUpdateProjection(mat4 proj);
     void OnUpdateView(mat4 viewMat);
 
-    static void testFunc(mat4 t) {Log.Warn("Test");}
+    static void testFunc(mat4 t) {logger.Warn("Test");}
 
     GLint modelMatLoc;
     GLint viewMatLoc;
@@ -34,10 +35,12 @@ private:
     GLint unixSecsLoc;
 
     Camera *camera;
+
     mat4 cameraView;
     mat4 cameraProj;
 
     GLuint id;
+
 public:
 
 

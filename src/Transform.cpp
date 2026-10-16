@@ -44,7 +44,7 @@ void Transform::RemoveChild(Transform *child)
             return;
         }
     }
-    Log.FatalError("DrawableObject child to be removed not found!");
+    logger.FatalError("DrawableObject child to be removed not found!");
 }
 
 void Transform::RecalculateMatrix(mat4 root)

@@ -100,6 +100,7 @@ add_executable(zpgproj
     src/Scene.cpp
     src/Log.cpp
     src/DynamicTransform.cpp
+    src/Input.cpp
 
 )
 

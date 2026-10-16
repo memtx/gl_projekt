@@ -12,6 +12,7 @@
 #include "models/moon.h"
 #include "models/clock.h"
  
+
 Application::~Application() 
 {
 	for(auto o : models)
@@ -77,8 +78,10 @@ void Application::Init(int width, int height, const char *windowName)
 
 	srand(time(NULL));
     rootScene = nullptr;
-	glfwSetKeyCallback(this->window, this->callback_keyPress); //funkce se volá pouze na destinaci. i kdybych dal jen pointer, změnou callback nezměním 
 
+	glfwSetCursorPosCallback(this->window, input.cursor_callback);
+	glfwSetKeyCallback(this->window, input.keypress_callback); //callback is set so I can't change it later, even with a pointer
+	glfwSetMouseButtonCallback(this->window, input.button_callback);
 	this->cam = new Camera();
 }
 
@@ -122,10 +125,10 @@ void Application::LoadObjects()
 
 	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
 	 
-	for(float i=0; i<10; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360,0), vec3(0.1))));
-	for(float i=0; i<10; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%20/10.0f-1,rand()%20/10.0f-1,0.5), vec3(0,rand()%360, 0), vec3(0.1))));
+	for(float i=0; i<70; i++)
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(1))));
+	for(float i=0; i<70; i++)
+		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0  ,rand()%200/10.0f-10), vec3(0,rand()%360, 0), vec3(1))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 	this->rootScene = scenes[0];
  
@@ -158,6 +161,8 @@ void Application::RunLoop()
 
 	while (!glfwWindowShouldClose(this->window)) 
 	{
+		logger.ResetPerFrameCounters();
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;  
@@ -166,6 +171,8 @@ void Application::RunLoop()
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		DynamicTransform::UpdateDynamicTransforms(deltaTime);
+
+		input.processKeyInputs();
 
         if(callback_preDraw)
             callback_preDraw();
@@ -184,12 +191,16 @@ void Application::RunLoop()
         // FPS counter
         frameCount++;
         
+		//once per second
         if ((fpsCounterTimer += deltaTime) >= 1 )
         {
 			fpsCounterTimer = 0;
             printf("FPS: %d\n", frameCount);
+			logger.PrintCounters();
 			frameCount = 0;
         }
+
+
 	}
 		 
 	glfwDestroyWindow(this->window);

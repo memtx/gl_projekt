@@ -55,6 +55,6 @@ DynamicTransform::~DynamicTransform()
             return;
         }
     }
-    Log.FatalError("Couldn't remove DynamicTransform from list!");
+    logger.FatalError("Couldn't remove DynamicTransform from list!");
 }
 

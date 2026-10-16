@@ -24,6 +24,7 @@ private:
     vec3 cameraUp;
 
     void UpdateViewAndCall();
+    void UpdateProjectionAndCall();
 
 public:
 

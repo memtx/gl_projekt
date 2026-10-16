@@ -15,6 +15,7 @@ Camera::Camera()
     projection = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.1f, 100.0f);
  
     UpdateViewAndCall();
+    UpdateProjectionAndCall();
 }
 
 Camera::~Camera()
@@ -27,6 +28,12 @@ void Camera::UpdateViewAndCall()
 {
     view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
     viewUpdate->Call(view);
+}
+
+void Camera::UpdateProjectionAndCall()
+{
+    projection = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+    projectionUpdate->Call(projection);
 }
 
 void Camera::SetPos(vec3 p) //absolute coordinates

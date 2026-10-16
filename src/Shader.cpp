@@ -37,18 +37,9 @@ Shader::Shader(GLenum GL_TYPEOF_SHADER, const char* shaderFile)
     {
         char infoLog[1024];
         glGetShaderInfoLog(id, sizeof(infoLog), nullptr, infoLog);
-        Log.FatalError("Shader failed",infoLog);
+        logger.FatalError("Shader failed",infoLog);
         glDeleteShader(id);
         exit(1);
     }
 
 }
-/*
-GLuint Shader::GetRef()
-{
-    if(ref <= 0)
-    { printf("ERROR: tried to use invalid shader (%d)\n", ref);}
-
-    return ref;
-}
-    */
