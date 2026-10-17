@@ -21,6 +21,4 @@ int main(void)
 	app.LoadObjects();
 
 	app.RunLoop();
-
-
 }

@@ -71,6 +71,5 @@ void main()
     
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * timedPos;// vec4(position, 1);
     
-
     vertexColor = color; //can also pass normals as color (may use abs() for color on all sides)
 } 

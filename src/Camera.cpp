@@ -10,6 +10,9 @@ Camera::Camera(vec3 p, vec2 r)
     cameraUp    = vec3(0,1,0);
 
     rot = vec2(-90.0f,0.0f);
+    
+    this->Move(p);
+    this->AddRot(r);
 
     //view = glm::lookAt(cameraPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     projection = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.1f, 100.0f);

@@ -66,15 +66,17 @@ enum AppShaders
     S_MATSNORMAL_VERTEX = 2,
     S_CLOCK_VERTEX = 3,
     S_CLOCK_FRAG = 4,
-    S_COUNT = 5
+    S_TREE_VERTEX = 5,
+    S_COUNT = 6
 };
  
 enum AppShaderPrograms
 {
     SP_FULLMATS = 0,
     SP_FULLMATSNORMAL = 1,
-    SP_CLOCK = 2,
-    SP_COUNT = 3
+    SP_TREESPLIT = 2,
+    SP_CLOCK = 3,
+    SP_COUNT = 4
 };
 
 extern class Application

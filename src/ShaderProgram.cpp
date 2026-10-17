@@ -96,10 +96,8 @@ void ShaderProgram::UseCamera(Camera *c)
 
     OnUpdateProjection(this->camera->getProjection());
     OnUpdateView(this->camera->getView());
-    
 
 }
-
 
 void ShaderProgram::SetMatrices(Transform *t)
 {
