@@ -35,13 +35,38 @@ void Input::processKeyInputs()
 
 	if(IsKeyPressed(GLFW_KEY_SPACE))
 		app.cam->Move(vec3(0,1,0));
+		//==============================
+	if(IsKeyPressed(GLFW_KEY_I))
+		app.controlledTransform->Translate(vec3(0,0,1));
+	
+	if(IsKeyPressed(GLFW_KEY_K))
+		app.controlledTransform->Translate(vec3(0,0,-1));
+	
+	if(IsKeyPressed(GLFW_KEY_J))
+		app.controlledTransform->Translate(vec3(-1,0,0));
+	
+	if(IsKeyPressed(GLFW_KEY_L))
+		app.controlledTransform->Translate(vec3(1,0,0));
 
-	if(IsKeyPressed(GLFW_KEY_Q))
+	if(IsKeyPressed(GLFW_KEY_Y))
+		app.controlledTransform->Translate(vec3(0,1,0));
+	
+	if(IsKeyPressed(GLFW_KEY_H))
+		app.controlledTransform->Translate(vec3(0,-1,0));
+
+	if(IsKeyPressed(GLFW_KEY_U))
 		app.controlledTransform->Rotate(vec3(0,20,0));
 		
-	if(IsKeyPressed(GLFW_KEY_E))
+	if(IsKeyPressed(GLFW_KEY_O))
 		app.controlledTransform->Rotate(vec3(0,-20,0));
 		
+	if(IsKeyPressed(GLFW_KEY_N))
+		app.controlledTransform->Scale(vec3(1.1));
+		
+	if(IsKeyPressed(GLFW_KEY_M))
+		app.controlledTransform->Scale(vec3(1/1.1));
+
+		//==========================
 
 	if(IsKeyPressed(GLFW_KEY_1))
 	{

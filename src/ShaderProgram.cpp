@@ -112,8 +112,8 @@ void ShaderProgram::SetMatrices(Transform *t)
     if(t->GetParent() == nullptr)
         t->RecalculateMatrix();
 
-    OnUpdateProjection(cameraProj);
-    OnUpdateView(cameraView);
+    //OnUpdateProjection(cameraProj);
+    //OnUpdateView(cameraView);
 
     mat4 test = t->resultMat;
     glad_glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,  glm::value_ptr((test)));

@@ -127,15 +127,15 @@ void Application::LoadObjects()
 	
 	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
 	
-	/*
+	
 	for(float i=0; i<70; i++)
 		scenes[0]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(1))));
 	for(float i=0; i<70; i++)
 		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0  ,rand()%200/10.0f-10), vec3(0,rand()%360, 0), vec3(1))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], Transform(vec3(0,0.8,1), vec3(0), vec3(0.1))));
 
-	*/
-	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_FULLMATSNORMAL], controlledTransform));
+	
+	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], controlledTransform));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(10,0,0))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,10,0))));
 	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,0,10))));

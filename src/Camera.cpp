@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera()
+Camera::Camera(vec3 p, vec2 r)
 {
     projectionUpdate = new Event<mat4>();
     viewUpdate = new Event<mat4>();

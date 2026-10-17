@@ -28,7 +28,7 @@ private:
 
 public:
 
-    Camera();
+    Camera(vec3 pos = vec3(0), vec2 rot = vec2(0));
     ~Camera();
     vec3 GetPos();
     vec3 GetRot();
