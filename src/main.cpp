@@ -14,7 +14,7 @@ typedef glm::vec3 vec3;
 
 int main(void)
 {
-	app.Init(800, 600, "ZPG Projekt");
+	app.Init(800, 600, 60.0f, "ZPG Projekt");
 
 	app.LoadModels();
 	app.LoadShaders();

@@ -67,7 +67,12 @@ enum AppShaders
     S_CLOCK_VERTEX = 3,
     S_CLOCK_FRAG = 4,
     S_TREE_VERTEX = 5,
-    S_COUNT = 6
+    S_LIGHTABLE_VERTEX = 6,
+    S_AMBIENT_FRAG = 7,
+    S_DIFFUSE_FRAG = 8,
+    S_PHONG_FRAG = 9,
+    S_BLINNPHONG_FRAG = 10,
+    S_COUNT = 11
 };
  
 enum AppShaderPrograms
@@ -76,7 +81,11 @@ enum AppShaderPrograms
     SP_FULLMATSNORMAL = 1,
     SP_TREESPLIT = 2,
     SP_CLOCK = 3,
-    SP_COUNT = 4
+    SP_AMBIENT = 4,
+    SP_DIFFUSE = 5,
+    SP_PHONG = 6,
+    SP_BLINNPHONG = 7,
+    SP_COUNT = 8
 };
 
 extern class Application
@@ -99,7 +108,7 @@ public:
     ~Application();
 
     //initialize openGL and its libraries. exits on failure.
-    void Init(int width, int height, const char *windowName);
+    void Init(int width, int height, float fov, const char *windowName);
     void RunLoop();
 
     void LoadModels();

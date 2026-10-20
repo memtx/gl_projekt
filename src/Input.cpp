@@ -95,13 +95,13 @@ void Input::processKeyInputs()
 
 }
 
-void Input::keypress_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Input::keypress_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
 
 	printf("key_callback [%c (%d),%d,%d,%d] \n", key, key, scancode, action, mods);
 }
 
-void Input::button_callback(GLFWwindow* window, int button, int action, int mode){
+void Input::button_callback(GLFWwindow *window, int button, int action, int mode){
 	if (action == GLFW_PRESS)
 	{
 		printf("button_callback [%d,%d,%d]\n", button, action, mode);
@@ -111,6 +111,17 @@ void Input::button_callback(GLFWwindow* window, int button, int action, int mode
 
 	}
 }  
+
+void Input::scroll_callback(GLFWwindow *window, double offsetx, double offsety)
+{
+	app.cam->SetFov(app.cam->GetFov()+offsety);
+}
+
+void Input::resize_callback(GLFWwindow *window, int width, int height)
+{
+	app.cam->SetAspectRatio(width, height);
+	glViewport(0,0,width, height);
+}
 
 void Input::cursor_callback(GLFWwindow *window, double x, double y)
 {

@@ -1,0 +1,29 @@
+#version 330 core
+
+uniform mat4 modelMatrix = mat4(1.0f);
+uniform mat4 viewMatrix = mat4(1.0f);
+uniform mat4 projectionMatrix = mat4(1.0f);
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec3 color;
+
+out vec3 vertexColor;
+out vec3 fragNormal;
+out vec3 fragPos;
+
+void main()
+{
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
+    
+    
+    //float shade = 0.3 + 0.7 * abs(normal.y);
+
+    vertexColor = color;
+    
+    fragPos = vec3(modelMatrix * vec4(position, 1));
+
+    mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+    fragNormal = normalize(normalMatrix * normal);
+    
+}

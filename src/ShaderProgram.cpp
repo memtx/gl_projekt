@@ -16,22 +16,30 @@ void ShaderProgram::SetFloat(GLint location, float value)
 }
 
 
-void ShaderProgram::OnUpdateView(mat4 view)
+void ShaderProgram::OnUpdateView(Camera *cam)
 {
-    cameraView = view;
+    cameraView = cam->getView();
     this->Use();
     if(this->viewMatLoc != -1)
     {
         glad_glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraView)));
         logger.countUniforms++;
     }
-    logger.Warn("view");
+
+    if(this->cameraPosLoc != -1)
+    {
+        vec3 cpos = cam->GetPos();
+        glad_glUniform3fv(cameraPosLoc, 1, glm::value_ptr(cpos));
+    
+        logger.Warn("camPos");
+    }
+    
 
 }
 
-void ShaderProgram::OnUpdateProjection(mat4 proj)
+void ShaderProgram::OnUpdateProjection(Camera *cam)
 {
-    cameraProj = proj;
+    cameraProj = cam->getProjection();
     this->Use();
     if(this->projMatLoc != -1)
     {
@@ -39,7 +47,9 @@ void ShaderProgram::OnUpdateProjection(mat4 proj)
         glad_glUniformMatrix4fv(projMatLoc, 1, GL_FALSE,  glm::value_ptr((cameraProj)));
         logger.countUniforms++;
     }
+    
     logger.Warn("proj");
+
 }
 
 ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...) 
@@ -58,6 +68,11 @@ ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...)
     viewMatLoc = GetVarLocation("viewMatrix");
     projMatLoc = GetVarLocation("projectionMatrix");    
     unixSecsLoc = GetVarLocation("unixSecs");    
+
+    globalLightPosLoc = GetVarLocation("globalLightPos");
+    ambientStrengthLoc = GetVarLocation("ambientStrength");
+    cameraPosLoc = GetVarLocation("cameraPos");
+
 
     this->camera = nullptr;
     UseCamera(cam);
@@ -94,8 +109,8 @@ void ShaderProgram::UseCamera(Camera *c)
         this->camera = c;
     }
 
-    OnUpdateProjection(this->camera->getProjection());
-    OnUpdateView(this->camera->getView());
+    OnUpdateProjection(this->camera);
+    OnUpdateView(this->camera);
 
 }
 
@@ -125,6 +140,26 @@ void ShaderProgram::SetMatrices(Transform *t)
         logger.countUniforms++;
     }
 
-
     //this->Disuse();
+}
+
+void ShaderProgram::SetAmbientStrength(float ambStrength)
+{
+    if(ambientStrengthLoc != -1)
+    {
+        glad_glUniform1f(ambientStrengthLoc, ambStrength);
+        logger.countUniforms++;
+    }
+    else
+        logger.FatalError("Tried to set ambient strength in shader without it.");
+}
+
+void ShaderProgram::SetGlobalLightPos(vec3 globalLightPos)
+{
+    if(globalLightPosLoc != -1)
+    {
+        vec3 lp = globalLightPos;
+        glad_glUniform3fv(globalLightPosLoc, 1, glm::value_ptr(lp));
+    }
+
 }

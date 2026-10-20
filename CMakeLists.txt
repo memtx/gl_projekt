@@ -101,6 +101,7 @@ add_executable(zpgproj
     src/Log.cpp
     src/DynamicTransform.cpp
     src/Input.cpp
+    src/Material.cpp
 
 )
 

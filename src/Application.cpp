@@ -28,7 +28,7 @@ Application::~Application()
 		delete o;
 }
 
-void Application::Init(int width, int height, const char *windowName)
+void Application::Init(int width, int height, float fov, const char *windowName)
 {
 	//==== GL INIT ====
 
@@ -43,9 +43,9 @@ void Application::Init(int width, int height, const char *windowName)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, 
 	GLFW_OPENGL_CORE_PROFILE);  //*/
+	this->cam = new Camera(vec3(0,5,0), vec3(0), vec2(width, height), 60.0f);
 
-
-	this->window = glfwCreateWindow(width, height, windowName, NULL, NULL);
+	this->window = glfwCreateWindow(cam->GetAspectRatio().x, cam->GetAspectRatio().y, windowName, NULL, NULL);
 	if (!this->window)
 	{
 		glfwTerminate();
@@ -82,7 +82,8 @@ void Application::Init(int width, int height, const char *windowName)
 	glfwSetCursorPosCallback(this->window, input.cursor_callback);
 	glfwSetKeyCallback(this->window, input.keypress_callback); //callback is set so I can't change it later, even with a pointer
 	glfwSetMouseButtonCallback(this->window, input.button_callback);
-	this->cam = new Camera(vec3(0,5,0));
+	glfwSetWindowSizeCallback(this->window, input.resize_callback);
+	glfwSetScrollCallback(this->window, input.scroll_callback);
 }
 
 
@@ -109,24 +110,35 @@ void Application::LoadShaders()
 	shaders[S_CLOCK_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_clockColorCamera.vert");
 	shaders[S_CLOCK_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/6_clockRecolor.frag");
 	shaders[S_TREE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfTreeSplit.vert");
+	shaders[S_LIGHTABLE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/7_lightable.vert");
+	shaders[S_AMBIENT_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_ambient.frag");
+	shaders[S_DIFFUSE_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_diffuse.frag");
+	shaders[S_PHONG_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_phong.frag");
+	shaders[S_BLINNPHONG_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_blinnPhong.frag");
 
 	shaderPrograms[SP_FULLMATS] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATS_VERTEX]);
 	shaderPrograms[SP_FULLMATSNORMAL] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATSNORMAL_VERTEX]);
 	shaderPrograms[SP_CLOCK] = new ShaderProgram(cam, 2, shaders[S_CLOCK_FRAG], shaders[S_CLOCK_VERTEX]);
 	shaderPrograms[SP_TREESPLIT] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_TREE_VERTEX]);
+	shaderPrograms[SP_AMBIENT] = new ShaderProgram(cam, 2, shaders[S_AMBIENT_FRAG], shaders[S_LIGHTABLE_VERTEX]);
+	shaderPrograms[SP_DIFFUSE] = new ShaderProgram(cam, 2, shaders[S_DIFFUSE_FRAG], shaders[S_LIGHTABLE_VERTEX]);
+	shaderPrograms[SP_PHONG] = new ShaderProgram(cam, 2, shaders[S_PHONG_FRAG], shaders[S_LIGHTABLE_VERTEX]);
+	shaderPrograms[SP_BLINNPHONG] = new ShaderProgram(cam, 2, shaders[S_BLINNPHONG_FRAG], shaders[S_LIGHTABLE_VERTEX]);
 } 
+
 
 void Application::LoadObjects()  
 {
-	controlledTransform = new Transform(vec3(0,1,0), vec3(0), vec3(1));
-	//controlledTransform->Scale(vec3(0.1, 0.1, 0.1));
+	controlledTransform = new Transform(vec3(0,0,0), vec3(0), vec3(1));
+	controlledTransform->Scale(vec3(0.1, 0.1, 0.1));
 	//.Rotate(vec3(-45,0,0));  
-  
+ 
+	controlledTransform->onChange = [](Transform* t){ app.shaderPrograms[SP_BLINNPHONG]->SetGlobalLightPos(t->GetPos()); };
+
 	for(int i=0; i<4; i++) 
 		scenes.push_back(new Scene());
 	this->rootScene = scenes[0];
 
-	
 	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(4,1,0)),vec3(0,5,0),72)));
 	 
 	for(float i=0; i<30; i++) 
@@ -152,10 +164,14 @@ void Application::LoadObjects()
 
 	scenes[0]->AddObject(planets);
 
-	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform().Rotate(vec3(0,0,90)).Translate(vec3(0.5,0,0))));
-	scenes[2]->AddObject(new DrawableObject(models[MDL_TRIANGLE], shaderPrograms[SP_FULLMATSNORMAL], Transform().Translate(vec3(0.5,0,0)).Rotate(vec3(0,0,90))));
-    
-	scenes[3]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], controlledTransform)); //new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], controlledTransform));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(2,0,0))));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(-2,0,0))));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0))));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,-2,0))));
+	
+	scenes[2]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], controlledTransform)); //new DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(0.5),vec3(0), vec3(0.1)), vec3(0,0,0.01), 360*100)
+	
 } 
 
 void Application::RunLoop()

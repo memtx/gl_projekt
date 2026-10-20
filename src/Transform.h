@@ -20,8 +20,9 @@ private:
     mat4 mat; //holding current object's transforms
 public:
     mat4 resultMat; //holding the transforms after processing with root
+    void (*onChange)(Transform *t);
 
-    const vec3 GetPos(){ return pos; }
+    const vec3 GetPos(){ return mat*glm::vec4(vec3(0),1); } //so smart, instant ego boost
     const vec3 GetRot(){ return rot; }
     const vec3 GetScale(){ return scale; }
     //void SetPos(vec3 p) { pos=p; }; //currently don't know how, and don't have enough time to dilly-dally with QOL features
@@ -45,5 +46,5 @@ public:
 
     Transform(glm::vec3 pos = vec3(0.0f,0.0f,0.0f), vec3 rot = vec3(0.0f,0.0f,0.0f), vec3 scale = vec3(1.0f,1.0f,1.0f), mat4 mat = mat4(1));
 
-    void RecalculateMatrix(mat4 root = mat4(1.0f));
+    void RecalculateMatrix(Transform* t = nullptr);
 };

@@ -24,15 +24,17 @@ private:
     std::vector<Shader*> shaders = std::vector<Shader*>(); //todo
     GLint GetVarLocation(const char* name);
     void SetFloat(GLint location, float value);
-    void OnUpdateProjection(mat4 proj);
-    void OnUpdateView(mat4 viewMat);
-
-    static void testFunc(mat4 t) {logger.Warn("Test");}
+    void OnUpdateProjection(Camera *c);
+    void OnUpdateView(Camera *c);
 
     GLint modelMatLoc;
     GLint viewMatLoc;
     GLint projMatLoc;
     GLint unixSecsLoc;
+
+    GLint ambientStrengthLoc;
+    GLint globalLightPosLoc;
+    GLint cameraPosLoc;
 
     Camera *camera;
 
@@ -42,9 +44,6 @@ private:
     GLuint id;
 
 public:
-
-
-
     ShaderProgram(Camera *camera = nullptr, int shaderCount = 0, ...); //Create and link the shader program 
     void Use();
     static void Disuse();
@@ -52,6 +51,9 @@ public:
     void RemoveShader();
     bool HasTransform();
     void SetMatrices(Transform *t);
+
+    void SetAmbientStrength(float normalizedStrength);
+    void SetGlobalLightPos(vec3 globalLightPos);
 
     void UseCamera(Camera *c);
 
