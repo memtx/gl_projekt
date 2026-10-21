@@ -15,6 +15,44 @@ void ShaderProgram::SetFloat(GLint location, float value)
 	//glUseProgram(0);
 }
 
+float ShaderProgram::GetFloat(GLint location)
+{
+    float result;
+	glad_glGetUniformfv(id, location, &result);
+    return result;
+}
+
+
+void ShaderProgram::SetInt(GLint location, int value)
+{
+    glUseProgram(id);
+	glUniform1i(location, value);
+	//glUseProgram(0);
+}
+
+int ShaderProgram::GetInt(GLint location)
+{
+    int result;
+	glad_glGetUniformiv(id, location, &result);
+    return result;
+}
+
+
+void ShaderProgram::SetVec3(GLint location, vec3 value)
+{
+    vec3 val = value;
+    glUseProgram(id);
+	glUniform3fv(location,1, glm::value_ptr(val));
+	//glUseProgram(0);
+}
+
+vec3 ShaderProgram::GetVec3(GLint location)
+{
+    float result[3];
+	glad_glGetnUniformfv(id, location, sizeof(result), result);
+    return vec3(result[0], result[1], result[2]);
+}
+
 
 void ShaderProgram::OnUpdateView(Camera *cam)
 {
@@ -141,6 +179,31 @@ void ShaderProgram::SetMatrices(Transform *t)
     }
 
     //this->Disuse();
+}
+
+MaterialProperty ShaderProgram::GetMaterialProperty(std::string name, MatDatTypes matType)
+{
+    GLint loc = GetVarLocation("viewMatrix");
+    MaterialProperty::Data dat = (MaterialProperty::Data)0;
+    switch(matType)
+    {
+        case MatDatTypes::FLOAT_PROP:
+            dat.float_data = this->GetFloat(loc);
+            break;
+
+        case MatDatTypes::INT_PROP:
+            dat.int_data = this->GetInt(loc);
+            break;
+
+        case MatDatTypes::VEC3_PROP:
+            dat.vec3_data = this->GetVec3(loc);
+            break;
+        
+        default:
+            logger.FatalError("invalid material data type in shader program");
+    }
+
+    return MaterialProperty(matType, dat, loc);
 }
 
 void ShaderProgram::SetAmbientStrength(float ambStrength)

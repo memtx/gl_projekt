@@ -102,6 +102,7 @@ add_executable(zpgproj
     src/DynamicTransform.cpp
     src/Input.cpp
     src/Material.cpp
+    src/MaterialProperty.cpp
 
 )
 
