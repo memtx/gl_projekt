@@ -88,7 +88,7 @@ void ShaderProgram::OnUpdateProjection(Camera *cam)
         logger.countUniforms++;
     }
     
-    logger.Warn("proj");
+    logger.Warn("projection updated");
 
 }
 

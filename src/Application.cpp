@@ -139,31 +139,31 @@ void Application::LoadShaders()
 
 void Application::LoadMaterials()
 {
-	materials[MAT_AMBIENT] = new Material();
-	materials[MAT_AMBIENT]->AddProperty("ambientStrength", 1.0f);
-	materials[MAT_AMBIENT]->AddProperty("objectColor", vec3(-2));
+	materials[MAT_AMBIENT] = (new Material())
+		->AddProperty("ambientStrength", 1.0f)
+		->AddProperty("objectColor", vec3(-2));
 	
-	materials[MAT_PHONG] = new Material();
-	materials[MAT_PHONG]->AddProperty("ambientStrength", 0.3f);
-	materials[MAT_PHONG]->AddProperty("objectColor", vec3(0.3f));
-	materials[MAT_PHONG]->AddProperty("specularStrength", 0.5f);
-	materials[MAT_PHONG]->AddProperty("specularPower", 8);
+	materials[MAT_PHONG] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(0.3f))
+		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularPower", 8);
 
-	materials[MAT_BLINNPHONG] = new Material();
-	materials[MAT_BLINNPHONG]->AddProperty("ambientStrength", 0.3f);
-	materials[MAT_BLINNPHONG]->AddProperty("objectColor", vec3(-2));
-	materials[MAT_BLINNPHONG]->AddProperty("specularStrength", 0.5f);
-	materials[MAT_BLINNPHONG]->AddProperty("specularPower", 16);
+	materials[MAT_BLINNPHONG] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(-2))
+		->AddProperty("specularStrength", 1.0f)
+		->AddProperty("specularPower", 16);
 
-	materials[MAT_REFLECTOR] = new Material(); 	//cool effect, see .frag for details
-	materials[MAT_REFLECTOR]->AddProperty("ambientStrength", 0.3f);
-	materials[MAT_REFLECTOR]->AddProperty("objectColor", vec3(0.3f));
-	materials[MAT_REFLECTOR]->AddProperty("specularStrength", 0.5f);
-	materials[MAT_REFLECTOR]->AddProperty("specularPower", 32);
+	materials[MAT_REFLECTOR] = (new Material()) 	//cool effect, see .frag for details
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(0.3f))
+		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularPower", 32);
 
-	materials[MAT_DIFFUSE] = new Material();
-	materials[MAT_DIFFUSE]->AddProperty("ambientStrength", 0.3f);
-	materials[MAT_DIFFUSE]->AddProperty("objectColor", vec3(0.3f));
+	materials[MAT_DIFFUSE] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(0.3f));
 
 	//Material::defaultMat->AddProperty("ambientStrength", 1.0f);
 	//Material::defaultMat->AddProperty("objectColor", vec3(0.3f)); //-1 for default, aka purple (1,0,1)

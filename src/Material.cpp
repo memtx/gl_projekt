@@ -8,39 +8,44 @@ Material::Material()
 
 Material *Material::defaultMat = new Material();
 
-void Material::AddProperty(std::string name, MaterialProperty prop)
+Material* Material::AddProperty(std::string name, MaterialProperty prop)
 {
     values.insert_or_assign(name, prop );
+    return this;
 };
 
 //=========
 
-void Material::AddProperty(std::string name, int val)
+Material* Material::AddProperty(std::string name, int val)
 { 
     MaterialProperty::Data dt = MaterialProperty::Data();
     dt.int_data = val; 
     AddProperty(name, MaterialProperty(MatDatTypes::INT_PROP, dt)); 
+    return this;
 }
 
-void Material::AddProperty(std::string name, float val)
+Material* Material::AddProperty(std::string name, float val)
 {
     MaterialProperty::Data dt = MaterialProperty::Data();
     dt.float_data = val; 
     AddProperty(name, MaterialProperty(MatDatTypes::FLOAT_PROP, dt)); 
+    return this;
 }
 
-void Material::AddProperty(std::string name, vec3 val)
+Material* Material::AddProperty(std::string name, vec3 val)
 { 
     MaterialProperty::Data dt = MaterialProperty::Data(); 
     dt.vec3_data = val;
 
     AddProperty(name, MaterialProperty(MatDatTypes::VEC3_PROP, dt)); 
+    return this;
 }
 
 
-void Material::RemoveProperty(std::string name)
+Material* Material::RemoveProperty(std::string name)
 {
     values.erase(name);
+    return this;
 };
 
 void Material::FindValues(ShaderProgram *sp)
