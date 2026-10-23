@@ -1,33 +1,35 @@
 #include "ShaderProgram.h"
 
+ShaderProgram *ShaderProgram::lastUsedShaderProgram = nullptr;
+
 GLint ShaderProgram::GetVarLocation(const char* name)
 {
-    glUseProgram(id);
 	GLuint location = glGetUniformLocation(id, name);
-	//glUseProgram(0);
     return location;
 }
 
 void ShaderProgram::SetFloat(GLint location, float value)
 {
-    glUseProgram(id);
+    this->Use();
 	glUniform1f(location, value);
 	//glUseProgram(0);
+    logger.countOptionalUniforms++;
 }
 
 float ShaderProgram::GetFloat(GLint location)
 {
     float result;
-	glad_glGetUniformfv(id, location, &result);
+	glGetUniformfv(id, location, &result);
     return result;
 }
 
 
 void ShaderProgram::SetInt(GLint location, int value)
 {
-    glUseProgram(id);
+    this->Use();
 	glUniform1i(location, value);
 	//glUseProgram(0);
+    logger.countOptionalUniforms++;
 }
 
 int ShaderProgram::GetInt(GLint location)
@@ -41,9 +43,10 @@ int ShaderProgram::GetInt(GLint location)
 void ShaderProgram::SetVec3(GLint location, vec3 value)
 {
     vec3 val = value;
-    glUseProgram(id);
+    this->Use();
 	glUniform3fv(location,1, glm::value_ptr(val));
 	//glUseProgram(0);
+    logger.countOptionalUniforms++;
 }
 
 vec3 ShaderProgram::GetVec3(GLint location)
@@ -68,8 +71,7 @@ void ShaderProgram::OnUpdateView(Camera *cam)
     {
         vec3 cpos = cam->GetPos();
         glad_glUniform3fv(cameraPosLoc, 1, glm::value_ptr(cpos));
-    
-        logger.Warn("camPos");
+        logger.countUniforms++;
     }
     
 
@@ -108,7 +110,6 @@ ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...)
     unixSecsLoc = GetVarLocation("unixSecs");    
 
     globalLightPosLoc = GetVarLocation("globalLightPos");
-    ambientStrengthLoc = GetVarLocation("ambientStrength");
     cameraPosLoc = GetVarLocation("cameraPos");
 
 
@@ -117,7 +118,14 @@ ShaderProgram::ShaderProgram(Camera *cam, int shaderCount, ...)
 }
 
 void ShaderProgram::Use()
-{ glUseProgram(id); }
+{
+    if(ShaderProgram::lastUsedShaderProgram != this)
+    {
+        ShaderProgram::lastUsedShaderProgram = this;
+        glUseProgram(this->id); 
+        logger.countShaderUses++; 
+    }
+}
 
 void ShaderProgram::Disuse()
 { glUseProgram(0); }
@@ -152,7 +160,7 @@ void ShaderProgram::UseCamera(Camera *c)
 
 }
 
-void ShaderProgram::SetMatrices(Transform *t)
+void ShaderProgram::SetTransform(Transform *t)
 {
     if(!HasTransform())
     {
@@ -170,20 +178,24 @@ void ShaderProgram::SetMatrices(Transform *t)
     glad_glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,  glm::value_ptr((test)));
     logger.countUniforms++;
 
+    //this->Disuse();
+}
+
+void ShaderProgram::SetUnixTime(int t)
+{
     if(this->unixSecsLoc != -1)
     { 
         static int t;
-        t = time(NULL) % (3600*24);  
+        t = t % (3600*24);  
         glad_glUniform1i(unixSecsLoc, t);
         logger.countUniforms++;
     }
 
-    //this->Disuse();
 }
 
 MaterialProperty ShaderProgram::GetMaterialProperty(std::string name, MatDatTypes matType)
 {
-    GLint loc = GetVarLocation("viewMatrix");
+    GLint loc = GetVarLocation(name.c_str());
     MaterialProperty::Data dat = (MaterialProperty::Data)0;
     switch(matType)
     {
@@ -206,23 +218,66 @@ MaterialProperty ShaderProgram::GetMaterialProperty(std::string name, MatDatType
     return MaterialProperty(matType, dat, loc);
 }
 
-void ShaderProgram::SetAmbientStrength(float ambStrength)
+void ShaderProgram::ApplyMaterial(Material *mat)
 {
-    if(ambientStrengthLoc != -1)
+    if(this->lastUsedMaterial != mat && mat != nullptr)
     {
-        glad_glUniform1f(ambientStrengthLoc, ambStrength);
-        logger.countUniforms++;
+        this->lastUsedMaterial = mat;
+        
+        if(this != mat->currentShaderProgram)
+        {
+            mat->currentShaderProgram = this;
+            this->Use();
+            mat->FindValues(this);
+        }
+
+        for(auto val : mat->GetPropertyMap())
+        {
+            //TODO: check if shaderProgram has values, 
+
+            MaterialProperty prop = val.second;
+            if(prop.loc < 0)
+            {
+                if(prop.loc == -1)
+                    logger.Warn("Property not found (-1)");
+                if(prop.loc == -2)
+                    logger.FatalError("Property never set (-2)");
+
+                continue;
+            }
+
+            switch(prop.data_type)
+            {
+                case MatDatTypes::INT_PROP:
+                    SetInt(prop.loc, prop.sharedData.int_data);
+                    break;
+
+                case MatDatTypes::FLOAT_PROP:
+                    SetFloat(prop.loc, prop.sharedData.float_data);
+                    break;
+
+                case MatDatTypes::VEC3_PROP:
+                    SetVec3(prop.loc, prop.sharedData.vec3_data);
+                    break;
+                
+                default:
+                    logger.FatalError("MaterialProperty has invalid data type");
+                    break;
+        
+            }
+            
+        }
     }
-    else
-        logger.FatalError("Tried to set ambient strength in shader without it.");
 }
 
 void ShaderProgram::SetGlobalLightPos(vec3 globalLightPos)
 {
     if(globalLightPosLoc != -1)
     {
-        vec3 lp = globalLightPos;
-        glad_glUniform3fv(globalLightPosLoc, 1, glm::value_ptr(lp));
+        this->Use();
+        //vec3 lp = globalLightPos;
+        SetVec3(globalLightPosLoc, globalLightPos);
+        //glad_glUniform3fv(globalLightPosLoc, 1, glm::value_ptr(lp));
     }
 
 }

@@ -23,10 +23,14 @@ void Log::FatalError(const char *msg, char *extra)
 
 void Log::ResetPerFrameCounters()
 {
-    countVAOBinds = 0; countUniforms = 0; countDraws = 0;
+    countVAOBinds = 0; 
+    countUniforms = 0; 
+    countDraws = 0;
+    countOptionalUniforms = 0;
+    countShaderUses = 0;
 }
 
 void Log::PrintCounters()
 {
-    printf("VAO:%d, Uniform:%d, Draw:%d\n", countVAOBinds, countUniforms, countDraws);
+    printf("VAO:%d, Uniform:%d, Draw:%d, MaterialUniforms: %d, ShaderUses: %d\n", countVAOBinds, countUniforms, countDraws, countOptionalUniforms, countShaderUses);
 }

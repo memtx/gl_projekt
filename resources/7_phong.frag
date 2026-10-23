@@ -3,6 +3,7 @@
 uniform float ambientStrength = 0.2f;
 uniform float specularStrength = 0.5f;
 uniform int specularPower = 32;
+uniform vec3 objectColor = vec3(-1);
 
 uniform vec3 globalLightPos = vec3(0);
 uniform vec3 cameraPos = vec3(0);
@@ -28,5 +29,10 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
     vec3 specular = specularStrength * spec * vec3(1,1,1); //specular light color
 
-    FragColor = vec4((ambient+diffuse+specular)*vec3(0,1,1), 1);
+    if(objectColor == vec3(-1))
+        FragColor = vec4((ambient+diffuse+specular)*vec3(0.5,0,0.5), 1);
+    else if(objectColor == vec3(-2))
+        FragColor = vec4((ambient+diffuse+specular)*vertexColor, 1);    
+    else
+        FragColor = vec4((ambient+diffuse+specular)*objectColor, 1);
 }

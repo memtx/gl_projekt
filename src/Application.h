@@ -33,6 +33,8 @@
 #include "Scene.h"
 #include "Log.h"
 #include "Camera.h"
+#include "Material.h"
+#include "MaterialProperty.h"
 
 #include "Input.h"
 
@@ -56,7 +58,8 @@ enum AppModels
     MDL_SUN = 7,
     MDL_MOON = 8,
     MDL_CLOCK = 9,
-    MDL_COUNT = 10
+    MDL_DINO = 10,
+    MDL_COUNT = 11
 };
 
 enum AppShaders
@@ -72,7 +75,8 @@ enum AppShaders
     S_DIFFUSE_FRAG = 8,
     S_PHONG_FRAG = 9,
     S_BLINNPHONG_FRAG = 10,
-    S_COUNT = 11
+    S_REFLECTOR_FRAG = 11,
+    S_COUNT = 12
 };
  
 enum AppShaderPrograms
@@ -85,7 +89,19 @@ enum AppShaderPrograms
     SP_DIFFUSE = 5,
     SP_PHONG = 6,
     SP_BLINNPHONG = 7,
-    SP_COUNT = 8
+    SP_REFLECTOR = 8,
+    SP_COUNT = 9
+};
+
+enum Materials
+{
+    MAT_EMPTY = 0,
+    MAT_AMBIENT = 1,
+    MAT_DIFFUSE = 2,
+    MAT_PHONG = 3,
+    MAT_BLINNPHONG = 4,
+    MAT_REFLECTOR = 5,
+    MAT_COUNT = 6
 };
 
 extern class Application
@@ -94,6 +110,7 @@ private:
     std::vector<Model*> models = std::vector<Model*>(MDL_COUNT);
     std::vector<Shader*> shaders = std::vector<Shader*>(S_COUNT);
     std::vector<ShaderProgram*> shaderPrograms = std::vector<ShaderProgram*>(SP_COUNT);
+    std::vector<Material*> materials = std::vector<Material*>(MAT_COUNT);
     
 public:
     // Pointer to the GLFW window
@@ -114,6 +131,7 @@ public:
     void LoadModels();
     void LoadShaders();
     void LoadObjects();
+    void LoadMaterials();
 
     void (*testCallback)();
     std::function<void()> callback_preDraw;

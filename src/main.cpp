@@ -18,6 +18,7 @@ int main(void)
 
 	app.LoadModels();
 	app.LoadShaders();
+	app.LoadMaterials();
 	app.LoadObjects();
 
 	app.RunLoop();

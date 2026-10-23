@@ -26,7 +26,6 @@ using namespace std::placeholders;
 class ShaderProgram
 {
 private:
-    std::vector<Shader*> shaders = std::vector<Shader*>(); //todo
     GLint GetVarLocation(const char* name);
     void SetFloat(GLint location, float value);
     float GetFloat(GLint location);
@@ -43,14 +42,15 @@ private:
     GLint projMatLoc;
     GLint unixSecsLoc;
 
-    GLint ambientStrengthLoc;
     GLint globalLightPosLoc;
     GLint cameraPosLoc;
 
     Camera *camera;
-
     mat4 cameraView;
     mat4 cameraProj;
+
+    static ShaderProgram *lastUsedShaderProgram;
+    Material *lastUsedMaterial;
 
     GLuint id;
 
@@ -61,8 +61,10 @@ public:
     void AddShader();
     void RemoveShader();
     bool HasTransform();
-    void SetMatrices(Transform *t);
+    void SetTransform(Transform *t);
+    void SetUnixTime(int time);
     MaterialProperty GetMaterialProperty(std::string name, MatDatTypes matType);
+    void ApplyMaterial(Material *material);
 
     void SetAmbientStrength(float normalizedStrength);
     void SetGlobalLightPos(vec3 globalLightPos);

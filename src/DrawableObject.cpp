@@ -1,10 +1,11 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform t, std::vector<DrawableObject*> childrenVec)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform t, Material *objectMaterial, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
-    
+    material = objectMaterial;
+
     //t.RecalculateMatrix();
     transform = new DynamicTransform(t);
     ((DynamicTransform*)transform)->PostCopyInit();
@@ -16,11 +17,12 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform t, 
     nonHeapTransformShouldDelete = true;
 }
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform* t, std::vector<DrawableObject*> childrenVec)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform* t, Material *objectMaterial, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
     transform = t;
+    material = objectMaterial;
 
     children = std::vector<DrawableObject*>();
     for(DrawableObject *child :childrenVec)
@@ -29,10 +31,11 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, DynamicTransform* t,
 
 
 //not using pointers is fine, the transform gets deleted by the destructor (scene must be non-ptr though)
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t, std::vector<DrawableObject*> childrenVec)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t, Material *objectMaterial, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
+    material = objectMaterial;
     
     t.RecalculateMatrix();
     transform = new Transform(t);
@@ -44,11 +47,12 @@ DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform t, std::ve
     nonHeapTransformShouldDelete = true;
 }
 
-DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform* t, std::vector<DrawableObject*> childrenVec)
+DrawableObject::DrawableObject(Model *m, ShaderProgram *sp, Transform* t, Material *objectMaterial, std::vector<DrawableObject*> childrenVec)
 {
     model = m;
     shaderProgram = sp;
     transform = t;
+    material = objectMaterial;
 
     children = std::vector<DrawableObject*>();
     for(DrawableObject *child :childrenVec)
@@ -90,8 +94,17 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
     }
 
     
-    shaderProgram->SetMatrices(transform);
-
+    shaderProgram->SetTransform(transform);
+    shaderProgram->SetUnixTime(time(NULL));
+    
+    
+    if(this->material != nullptr)
+    {
+        activeShaderProgram->ApplyMaterial(this->material);
+    }
+    else
+        activeShaderProgram->ApplyMaterial(this->material);
+    
 
     if(activeModel != model && model)
     {
@@ -109,13 +122,13 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
     for(DrawableObject *child : children)
         child->Draw();
     //model->unbindVAO();
-    //glUseProgram(0);
+
 }
 
 void DrawableObject::ClearActiveShader()
 {
     activeShaderProgram = nullptr;
 }
-
+ 
 ShaderProgram* DrawableObject::activeShaderProgram = nullptr;
 Model* DrawableObject::activeModel = nullptr; 

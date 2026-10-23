@@ -2,6 +2,7 @@
 
 uniform float ambientStrength = 0.5f;
 uniform vec3 globalLightPos = vec3(0);
+uniform vec3 objectColor = vec3(-1);
 
 in vec3 vertexColor;
 in vec3 fragNormal;
@@ -11,7 +12,7 @@ out vec4 FragColor;
 
 void main()
 {
-    vec3 ambientColor = ambientStrength * vec3(1,1,1); //ambient light color
+    vec3 ambient = ambientStrength * vec3(1,1,1); //ambient light color
 
     vec3 norm = normalize(fragNormal);
     vec3 lightDir = normalize(globalLightPos - fragPos);
@@ -19,5 +20,12 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0f);
     vec3 diffuse = diff * vec3(1, 1, 1); //diffuse light color
 
-    FragColor = vec4((ambientColor+diffuse)*vertexColor, 1);    
+    if(objectColor == vec3(-1))
+        FragColor = vec4((ambient+diffuse)*vec3(0.5,0,0.5), 1);
+    else if(objectColor == vec3(-2))
+        FragColor = vec4((ambient+diffuse)*vertexColor, 1);    
+    else
+        FragColor = vec4((ambient+diffuse)*objectColor, 1);
+
+
 }

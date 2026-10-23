@@ -16,6 +16,7 @@ public:
     int countVAOBinds;
     int countUniforms;
     int countDraws;
-
+    int countOptionalUniforms;
+    int countShaderUses;
 
 } logger;

@@ -14,10 +14,10 @@ class Material
 private:
     std::map<std::string, MaterialProperty> values;
     void AddProperty(std::string name, MaterialProperty prop);
-    ShaderProgram *currentShaderProgram;
-    void FindValues(ShaderProgram *sp);
 
 public:
+    ShaderProgram *currentShaderProgram;
+
     Material();
     void AddProperty(std::string name, int value);
     void AddProperty(std::string name, float value);
@@ -28,5 +28,11 @@ public:
     void SetProperty(std::string name, vec3 value);
     
     void RemoveProperty(std::string name);
-    void ApplyValues(ShaderProgram *sp);
+    std::map<std::string, MaterialProperty> GetPropertyMap() {return values;}
+    void FindValues(ShaderProgram *sp);
+
+    static Material *defaultMat;
+
+    static Material CreatePhong();
+    static Material CreateBlinnPhong();
 };

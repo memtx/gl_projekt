@@ -6,6 +6,7 @@ Material::Material()
     currentShaderProgram = nullptr;
 }
 
+Material *Material::defaultMat = new Material();
 
 void Material::AddProperty(std::string name, MaterialProperty prop)
 {
@@ -15,10 +16,18 @@ void Material::AddProperty(std::string name, MaterialProperty prop)
 //=========
 
 void Material::AddProperty(std::string name, int val)
-{ AddProperty(name, MaterialProperty(MatDatTypes::INT_PROP, (MaterialProperty::Data)val)); }
+{ 
+    MaterialProperty::Data dt = MaterialProperty::Data();
+    dt.int_data = val; 
+    AddProperty(name, MaterialProperty(MatDatTypes::INT_PROP, dt)); 
+}
 
 void Material::AddProperty(std::string name, float val)
-{ AddProperty(name, MaterialProperty(MatDatTypes::FLOAT_PROP, (MaterialProperty::Data)val)); }
+{
+    MaterialProperty::Data dt = MaterialProperty::Data();
+    dt.float_data = val; 
+    AddProperty(name, MaterialProperty(MatDatTypes::FLOAT_PROP, dt)); 
+}
 
 void Material::AddProperty(std::string name, vec3 val)
 { 
@@ -42,57 +51,9 @@ void Material::FindValues(ShaderProgram *sp)
 
     for(auto key : keys)
     {
-        MaterialProperty prop = sp->GetMaterialProperty(key, values[key].data_type);
+        MaterialProperty oldProp = values[key];
+        MaterialProperty prop = sp->GetMaterialProperty(key, oldProp.data_type);
+        prop.sharedData = oldProp.sharedData;
         values[key] = prop;
     }
 };
-
-void Material::ApplyValues(ShaderProgram *sp)
-{
-    if(sp == nullptr)
-    { logger.FatalError("Shader passed to material is null!"); }
-
-    if(sp != currentShaderProgram)
-    {
-        sp = currentShaderProgram;
-        FindValues(currentShaderProgram);
-    }
-
-    for(auto val : values)
-    {
-        //TODO: check if shaderProgram has values, 
-
-        MaterialProperty prop = val.second;
-        if(prop.loc < 0)
-        {
-            if(prop.loc == -1)
-                logger.Warn("Property not found (-1)");
-            if(prop.loc == -2)
-                logger.FatalError("Property never set (-2)");
-
-            continue;
-        }
-
-        switch(prop.data_type)
-        {
-            case MatDatTypes::INT_PROP:
-                glad_glUniform1i(prop.loc, prop.sharedData.int_data);
-                break;
-
-            case MatDatTypes::FLOAT_PROP:
-                glad_glUniform1f(prop.loc, prop.sharedData.float_data);
-                break;
-            case MatDatTypes::VEC3_PROP:
-            {
-                vec3 val = prop.sharedData.vec3_data;
-                glad_glUniform3fv(prop.loc, 1, glm::value_ptr(val));
-                break;
-            }
-            default:
-            {
-                logger.FatalError("MaterialProperty has invalid data type");
-            }
-        }
-        
-    }
-}
