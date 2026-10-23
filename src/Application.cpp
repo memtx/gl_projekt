@@ -151,7 +151,7 @@ void Application::LoadMaterials()
 
 	materials[MAT_BLINNPHONG] = new Material();
 	materials[MAT_BLINNPHONG]->AddProperty("ambientStrength", 0.3f);
-	materials[MAT_BLINNPHONG]->AddProperty("objectColor", vec3(0.3f));
+	materials[MAT_BLINNPHONG]->AddProperty("objectColor", vec3(-2));
 	materials[MAT_BLINNPHONG]->AddProperty("specularStrength", 0.5f);
 	materials[MAT_BLINNPHONG]->AddProperty("specularPower", 16);
 
@@ -218,14 +218,18 @@ void Application::LoadObjects()
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-4,0)), materials[MAT_DIFFUSE])); //down
 	
 
-	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,1,0), vec3(-45,0,0), vec3(0.1)), vec3(0,1,0), 360), nullptr, std::vector<DrawableObject*> 
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,0,0), vec3(-45,0,0), vec3(0.5)), vec3(0,0.1,0), 3600), materials[MAT_AMBIENT], std::vector<DrawableObject*> 
 	{ 
-		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,2,0), 360/2), nullptr, std::vector<DrawableObject*> 
+		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.2,0), 3600/2), materials[MAT_BLINNPHONG], std::vector<DrawableObject*> 
 		{
-			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_FULLMATS], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,1,0), 360))
+			new DrawableObject(models[MDL_MOON], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.1,0), 3600),  materials[MAT_BLINNPHONG])
+		}),
+		new DrawableObject(nullptr, shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(3,0,0)),vec3(0.1,0,0),3600), materials[MAT_BLINNPHONG],
+		{
+			new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(), vec3(0,1,0), 360), materials[MAT_BLINNPHONG])
 		})
 	}); 
-	scenes[2]->AddObject
+	scenes[2]->AddObject(planets);
 } 
 
 void Application::RunLoop()
