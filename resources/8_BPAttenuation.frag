@@ -51,6 +51,8 @@ void main()
         FragColor = vec4((ambient+diffuse+specular)*vec3(0.5,0.5,0.5)*att, 1);
     else if(objectColor == vec3(-2))
         FragColor = vec4((ambient+diffuse+specular)*vertexColor*att, 1);    
+    else if(objectColor == vec3(-3))
+        FragColor = vec4((ambient+diffuse+specular)+norm+att, 1);
     else
         FragColor = vec4((ambient+diffuse+specular)*objectColor*att, 1);
 

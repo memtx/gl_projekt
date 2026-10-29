@@ -11,7 +11,9 @@
 #include "models/sun.h"
 #include "models/moon.h"
 #include "models/clock.h"
-#include "models/dino.h"
+#include "../../dino.h"
+//#include "models/dino.h"
+
 #include "models/suzi_flat.h"
 #include "models/suzi_smooth.h"
 
@@ -60,6 +62,7 @@ void Application::Init(int width, int height, float fov, const char *windowName)
 		glfwTerminate();
 		exit(EXIT_FAILURE); 
 	}
+	
 
     glfwMakeContextCurrent(this->window);
 	glfwSwapInterval(0); //1 for vsync, 0 for none (or to fix lag)
@@ -162,7 +165,7 @@ void Application::LoadMaterials()
 		->AddProperty("ambientStrength", 0.3f)
 		->AddProperty("objectColor", vec3(0.3f))
 		->AddProperty("specularStrength", 1.0f)
-		->AddProperty("specularPower", 16);
+		->AddProperty("specularPower", 1);
 
 	materials[MAT_REFLECTOR] = (new Material()) 	//cool effect, see .frag for details
 		->AddProperty("ambientStrength", 0.3f)
@@ -188,6 +191,13 @@ void Application::LoadMaterials()
 		->AddProperty("specularPower", 8)
 		->AddProperty("attenuationFactors", vec3(1,0.09, 0.332));
 
+	materials[MAT_BPATTENUATION_NORM] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(-3))
+		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularPower", 16)
+		->AddProperty("attenuationFactors", vec3(1,0.09, 0.332));
+
 	//Material::defaultMat->AddProperty("ambientStrength", 1.0f);
 	//Material::defaultMat->AddProperty("objectColor", vec3(0.3f)); //-1 for default, aka purple (1,0,1)
 
@@ -199,7 +209,7 @@ void Application::LoadObjects()
 	
 	//======== special transforms ===========
 
-	controlledTransform = new Transform(vec3(0,2,0), vec3(0), vec3(1));
+	controlledTransform = new Transform(vec3(0,0,0), vec3(0), vec3(1));
 	controlledTransform->Scale(vec3(0.1));
 	//.Rotate(vec3(-45,0,0));  
 	
@@ -232,13 +242,15 @@ void Application::LoadObjects()
 	//scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,10,0))));
 	//scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,0,10))));
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BPDISTANCE], Transform(vec3(2,-3,2),vec3(0,80,0), vec3(5)),materials[MAT_BPATTENUATION] ));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BPDISTANCE], Transform(vec3(6,-3,5),vec3(0,80,0), vec3(1,8,1)),materials[MAT_BPATTENUATION_NORM] ));
 
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], controlledTransform, materials[MAT_FULLBRIGHT_TEXTURED]));
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_PHONG], Transform(vec3(2,0,0), vec3(0,180,0)), materials[MAT_PHONG])); //right
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BPDISTANCE], Transform(vec3(-2,0,0), vec3(0,180,0)), materials[MAT_BLINNPHONG])); //left
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0), vec3(0,180,0)), materials[MAT_BLINNPHONG])); //up
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0), vec3(0,90,0)), materials[MAT_BLINNPHONG])); //up
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-2,0), vec3(0,180,0)), materials[MAT_DIFFUSE])); //down
+
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,0,2), vec3(0,180,0)), materials[MAT_BLINNPHONG]));
 
 	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,0,0), vec3(-45,0,0), vec3(0.5)), vec3(0,0.1,0), 3600), materials[MAT_FULLBRIGHT_TEXTURED], std::vector<DrawableObject*> 
 	{ 

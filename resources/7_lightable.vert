@@ -22,8 +22,8 @@ void main()
     vertexColor = color;
     
     fragPos = vec3(modelMatrix * vec4(position, 1));
-
+    
     mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
     fragNormal = normalize(normalMatrix * normal);
-    
+
 }
