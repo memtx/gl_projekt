@@ -7,8 +7,11 @@ uniform mat4 projectionMatrix = mat4(1.0f);
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 color;
+
 out vec3 vertexColor;
- 
+out vec3 fragNormal;
+out vec3 fragPos;
+
 void main()
 {
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
@@ -19,4 +22,9 @@ void main()
         vertexColor = shade * vec3(0.f, 1.f, 0.f);
     else 
         vertexColor = shade * vec3(1.f, 0.f, 0.f);
+
+    fragPos = vec3(modelMatrix * vec4(position, 1));
+
+    mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+    fragNormal = normalize(normalMatrix * normal);
 }

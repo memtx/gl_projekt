@@ -12,8 +12,10 @@
 #include "models/moon.h"
 #include "models/clock.h"
 #include "models/dino.h"
- 
+#include "models/suzi_flat.h"
+#include "models/suzi_smooth.h"
 
+ 
 Application::~Application() 
 {
 	for(auto o : models)
@@ -107,7 +109,8 @@ void Application::LoadModels()
 	models[MDL_MOON] = new Model(moon, sizeof(moon), L_3COORD3NORMAL3VERTCOLOR);
 	models[MDL_CLOCK] = new Model(clockModel, sizeof(clockModel), L_3COORD3NORMAL3VERTCOLOR);
 	models[MDL_DINO] = new Model(dino, sizeof(dino), L_3COORD3NORMAL3VERTCOLOR);
-
+	models[MDL_SUZY_FLAT] = new Model(suziFlat, sizeof(suziFlat), L_3COORD3NORMAL);
+	models[MDL_SUZY_SMOOTH] = new Model(suziSmooth, sizeof(suziSmooth), L_3COORD3NORMAL);
 }
 
 void Application::LoadShaders()
@@ -116,7 +119,6 @@ void Application::LoadShaders()
 	shaders[S_MATS_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfColorCamera.vert");
 	shaders[S_MATSNORMAL_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfNormalCamera.vert");
 	shaders[S_CLOCK_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_clockColorCamera.vert");
-	shaders[S_CLOCK_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/6_clockRecolor.frag");
 	shaders[S_TREE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/6_transfTreeSplit.vert");
 	shaders[S_LIGHTABLE_VERTEX] = new Shader(GL_VERTEX_SHADER, "resources/7_lightable.vert");
 	shaders[S_AMBIENT_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_ambient.frag");
@@ -124,34 +126,41 @@ void Application::LoadShaders()
 	shaders[S_PHONG_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_phong.frag");
 	shaders[S_BLINNPHONG_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_blinnPhong.frag");
 	shaders[S_REFLECTOR_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/7_reflector.frag");
+	shaders[S_BPDISTANCE_FRAG] = new Shader(GL_FRAGMENT_SHADER, "resources/8_BPAttenuation.frag");
 
 	shaderPrograms[SP_FULLMATS] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATS_VERTEX]);
 	shaderPrograms[SP_FULLMATSNORMAL] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_MATSNORMAL_VERTEX]);
-	shaderPrograms[SP_CLOCK] = new ShaderProgram(cam, 2, shaders[S_CLOCK_FRAG], shaders[S_CLOCK_VERTEX]);
+	shaderPrograms[SP_CLOCK] = new ShaderProgram(cam, 2, shaders[S_BPDISTANCE_FRAG], shaders[S_CLOCK_VERTEX]);
 	shaderPrograms[SP_TREESPLIT] = new ShaderProgram(cam, 2, shaders[S_BASE_FRAG], shaders[S_TREE_VERTEX]);
 	shaderPrograms[SP_AMBIENT] = new ShaderProgram(cam, 2, shaders[S_AMBIENT_FRAG], shaders[S_LIGHTABLE_VERTEX]);
 	shaderPrograms[SP_DIFFUSE] = new ShaderProgram(cam, 2, shaders[S_DIFFUSE_FRAG], shaders[S_LIGHTABLE_VERTEX]);
 	shaderPrograms[SP_PHONG] = new ShaderProgram(cam, 2, shaders[S_PHONG_FRAG], shaders[S_LIGHTABLE_VERTEX]);
 	shaderPrograms[SP_BLINNPHONG] = new ShaderProgram(cam, 2, shaders[S_BLINNPHONG_FRAG], shaders[S_LIGHTABLE_VERTEX]);
 	shaderPrograms[SP_REFLECTOR] = new ShaderProgram(cam, 2, shaders[S_REFLECTOR_FRAG], shaders[S_LIGHTABLE_VERTEX]);
-
+	shaderPrograms[SP_BPDISTANCE] = new ShaderProgram(cam, 2, shaders[S_BPDISTANCE_FRAG], shaders[S_LIGHTABLE_VERTEX]);
+	shaderPrograms[SP_BPTREE] =  new ShaderProgram(cam, 2, shaders[S_BPDISTANCE_FRAG], shaders[S_TREE_VERTEX]);
 } 
+
 
 void Application::LoadMaterials()
 {
-	materials[MAT_AMBIENT] = (new Material())
+	materials[MAT_FULLBRIGHT_TEXTURED] = (new Material())
 		->AddProperty("ambientStrength", 1.0f)
 		->AddProperty("objectColor", vec3(-2));
+
+	materials[MAT_FULLBRIGHT_COLORED] = (new Material())
+		->AddProperty("ambientStrength", 1.0f)
+		->AddProperty("objectColor", vec3(0.3));
 	
 	materials[MAT_PHONG] = (new Material())
 		->AddProperty("ambientStrength", 0.3f)
 		->AddProperty("objectColor", vec3(0.3f))
-		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularStrength", 1.0f)
 		->AddProperty("specularPower", 8);
 
 	materials[MAT_BLINNPHONG] = (new Material())
 		->AddProperty("ambientStrength", 0.3f)
-		->AddProperty("objectColor", vec3(-2))
+		->AddProperty("objectColor", vec3(0.3f))
 		->AddProperty("specularStrength", 1.0f)
 		->AddProperty("specularPower", 16);
 
@@ -165,6 +174,20 @@ void Application::LoadMaterials()
 		->AddProperty("ambientStrength", 0.3f)
 		->AddProperty("objectColor", vec3(0.3f));
 
+	materials[MAT_BPATTENUATION] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(-2))
+		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularPower", 16)
+		->AddProperty("attenuationFactors", vec3(1,0.09, 0.332));
+
+	materials[MAT_BPATTENUATION_GREEN] = (new Material())
+		->AddProperty("ambientStrength", 0.3f)
+		->AddProperty("objectColor", vec3(0.1,0.9,0.1))
+		->AddProperty("specularStrength", 0.5f)
+		->AddProperty("specularPower", 8)
+		->AddProperty("attenuationFactors", vec3(1,0.09, 0.332));
+
 	//Material::defaultMat->AddProperty("ambientStrength", 1.0f);
 	//Material::defaultMat->AddProperty("objectColor", vec3(0.3f)); //-1 for default, aka purple (1,0,1)
 
@@ -173,10 +196,11 @@ void Application::LoadMaterials()
 
 void Application::LoadObjects()  
 {
+	
 	//======== special transforms ===========
 
-	controlledTransform = new Transform(vec3(0,0,0), vec3(0), vec3(1));
-	controlledTransform->Scale(vec3(0.1, 0.1, 0.1));
+	controlledTransform = new Transform(vec3(0,2,0), vec3(0), vec3(1));
+	controlledTransform->Scale(vec3(0.1));
 	//.Rotate(vec3(-45,0,0));  
 	
 	controlledTransform->onChange = [](Transform* t)
@@ -184,41 +208,39 @@ void Application::LoadObjects()
 		for(auto sp : app.shaderPrograms)
 			sp->SetGlobalLightPos(t->GetPos()); 
 	};
+	controlledTransform->onChange(controlledTransform);
 
 	//========== objects =============
 
+
 	for(int i=0; i<4; i++) 
 		scenes.push_back(new Scene());
-	this->rootScene = scenes[1];
+	this->rootScene = scenes[0];
 
+	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_BPDISTANCE], DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(4,1,0)),vec3(0,0,0),72), materials[MAT_BPATTENUATION_GREEN]));
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_LOGIN], shaderPrograms[SP_FULLMATSNORMAL], DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(4,1,0)),vec3(0,5,0),72)));
-	 
 	for(float i=0; i<30; i++) 
-		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_TREESPLIT], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(1))));
-	for(float i=0; i<30; i++)
-		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(rand()%200/10.0f-10, 0  ,rand()%200/10.0f-10), vec3(0,rand()%360, 0), vec3(1))));
+		scenes[0]->AddObject(new DrawableObject(models[MDL_TREE], shaderPrograms[SP_BPTREE], Transform(vec3(rand()%200/10.0f-10, 0 ,rand()%200/10.0f-10), vec3(0,rand()%360,0), vec3(2)), materials[MAT_BPATTENUATION]));
+	for(float i=0; i<70; i++)
+		scenes[0]->AddObject(new DrawableObject(models[MDL_BUSHES], shaderPrograms[SP_BPDISTANCE], Transform(vec3(rand()%200/10.0f-10, 0  ,rand()%200/10.0f-10), vec3(0,rand()%360, 0), vec3(3)), materials[MAT_BPATTENUATION_GREEN]));
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_PLAIN], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0), vec3(0), vec3(10,1,10))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_PLAIN], shaderPrograms[SP_BPDISTANCE], Transform(vec3(0), vec3(0), vec3(100,1,100)), materials[MAT_BPATTENUATION_GREEN]));
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], Transform(vec3(1,1,1), vec3(45,45,45), vec3(0.5))));
-	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], controlledTransform));
-	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(10,0,0))));
-	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,10,0))));
-	scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,0,10))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_CLOCK], shaderPrograms[SP_CLOCK], Transform(vec3(1,1,1), vec3(45,45,45), vec3(0.5)), materials[MAT_BPATTENUATION]));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], controlledTransform, materials[MAT_FULLBRIGHT_TEXTURED]));
+	//scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(10,0,0))));
+	//scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,10,0))));
+	//scenes[0]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_FULLMATSNORMAL], Transform(vec3(0,0,10))));
 
-	scenes[0]->AddObject(new DrawableObject(models[MDL_DINO], shaderPrograms[SP_FULLMATS], Transform(vec3(0))));
+	scenes[0]->AddObject(new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BPDISTANCE], Transform(vec3(2,-3,2),vec3(0,80,0), vec3(5)),materials[MAT_BPATTENUATION] ));
 
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], controlledTransform, materials[MAT_FULLBRIGHT_TEXTURED]));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_PHONG], Transform(vec3(2,0,0), vec3(0,180,0)), materials[MAT_PHONG])); //right
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BPDISTANCE], Transform(vec3(-2,0,0), vec3(0,180,0)), materials[MAT_BLINNPHONG])); //left
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0), vec3(0,180,0)), materials[MAT_BLINNPHONG])); //up
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-2,0), vec3(0,180,0)), materials[MAT_DIFFUSE])); //down
 
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], controlledTransform, materials[MAT_AMBIENT]));
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_PHONG], Transform(vec3(2,0,0)), materials[MAT_PHONG])); //right
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_REFLECTOR], Transform(vec3(-2,0,0)), materials[MAT_REFLECTOR])); //left
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0)), materials[MAT_BLINNPHONG])); //up
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-2,0)), materials[MAT_DIFFUSE])); //down
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-4,0)), materials[MAT_DIFFUSE])); //down
-	
-
-	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,0,0), vec3(-45,0,0), vec3(0.5)), vec3(0,0.1,0), 3600), materials[MAT_AMBIENT], std::vector<DrawableObject*> 
+	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,0,0), vec3(-45,0,0), vec3(0.5)), vec3(0,0.1,0), 3600), materials[MAT_FULLBRIGHT_TEXTURED], std::vector<DrawableObject*> 
 	{ 
 		new DrawableObject(models[MDL_EARTH], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(7,0,0), vec3(0), vec3(0.3)), vec3(0,0.2,0), 3600/2), materials[MAT_BLINNPHONG], std::vector<DrawableObject*> 
 		{
@@ -226,7 +248,7 @@ void Application::LoadObjects()
 		}),
 		new DrawableObject(nullptr, shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE, Transform(vec3(3,0,0)),vec3(0.1,0,0),3600), materials[MAT_BLINNPHONG],
 		{
-			new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(), vec3(0,1,0), 360), materials[MAT_BLINNPHONG])
+			new DrawableObject(models[MDL_DINO], shaderPrograms[SP_BLINNPHONG], DynamicTransform(DT_LINEAR_ROTATE,Transform(), vec3(0,1,0), 360), materials[MAT_BPATTENUATION])
 		})
 	}); 
 	scenes[2]->AddObject(planets);
@@ -246,6 +268,7 @@ void Application::RunLoop()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;  
 
+		
 		// Clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		DynamicTransform::UpdateDynamicTransforms(deltaTime);

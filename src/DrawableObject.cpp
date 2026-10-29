@@ -93,9 +93,9 @@ void DrawableObject::Draw() //first draw parent, then children. I guess openGL h
         activeShaderProgram->Use();  
     }
 
-    
+    size_t t = time(NULL);
+    shaderProgram->SetUnixTime(t);
     shaderProgram->SetTransform(transform);
-    shaderProgram->SetUnixTime(time(NULL));
     
     
     if(this->material != nullptr)

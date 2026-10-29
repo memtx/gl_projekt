@@ -181,12 +181,12 @@ void ShaderProgram::SetTransform(Transform *t)
     //this->Disuse();
 }
 
-void ShaderProgram::SetUnixTime(int t)
+void ShaderProgram::SetUnixTime(int unixSeconds)
 {
     if(this->unixSecsLoc != -1)
     { 
         static int t;
-        t = t % (3600*24);  
+        t = unixSeconds % (3600*24);  
         glad_glUniform1i(unixSecsLoc, t);
         logger.countUniforms++;
     }
