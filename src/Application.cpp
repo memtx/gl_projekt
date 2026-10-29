@@ -250,7 +250,7 @@ void Application::LoadObjects()
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,2,0), vec3(0,90,0)), materials[MAT_BLINNPHONG])); //up
 	scenes[1]->AddObject(new DrawableObject(models[MDL_SUZY_FLAT], shaderPrograms[SP_DIFFUSE], Transform(vec3(0,-2,0), vec3(0,180,0)), materials[MAT_DIFFUSE])); //down
 
-	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_BLINNPHONG], Transform(vec3(0,0,2), vec3(0,180,0)), materials[MAT_BLINNPHONG]));
+	scenes[1]->AddObject(new DrawableObject(models[MDL_SPHERE], shaderPrograms[SP_PHONG], Transform(vec3(0,0,2), vec3(0,180,0)), materials[SP_PHONG]));
 
 	DrawableObject *planets = new DrawableObject(models[MDL_SUN], shaderPrograms[SP_AMBIENT], DynamicTransform(DT_LINEAR_ROTATE,Transform(vec3(0,0,0), vec3(-45,0,0), vec3(0.5)), vec3(0,0.1,0), 3600), materials[MAT_FULLBRIGHT_TEXTURED], std::vector<DrawableObject*> 
 	{ 
